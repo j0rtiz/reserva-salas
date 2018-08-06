@@ -31,7 +31,7 @@
       </q-scroll-area>
     </q-layout-drawer>
     <q-page-container>
-      <router-view/>
+      <router-view :leftDrawer="leftDrawer" />
     </q-page-container>
   </q-layout>
 </template>

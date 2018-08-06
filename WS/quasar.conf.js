@@ -8,7 +8,8 @@ module.exports = function (ctx) {
       'axios',
       'senai',
       'vue-async-data-2',
-      'vuelidate'
+      'vuelidate',
+      'paginate'
     ],
     css: [
       'app.styl'
