@@ -4,7 +4,7 @@
   "description": "Reserva de Salas",
   "productName": "Reserva de Salas",
   "cordovaId": "org.cordova.quasar.app",
-  "author": "jors88 <jors88@devs.poa.br>",
+  "author": "Faculdade SENAI de Tecnologia",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
