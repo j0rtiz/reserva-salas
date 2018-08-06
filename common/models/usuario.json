@@ -1,0 +1,36 @@
+{
+  "name": "usuario",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "reservas": {
+      "type": "hasMany",
+      "model": "reserva",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
+  "acls": [
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": [
+        "find",
+        "findById",
+        "deleteById",
+        "create",
+        "patchAttributes"
+      ]
+    }
+  ],
+  "methods": {}
+}

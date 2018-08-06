@@ -1,0 +1,65 @@
+{
+  "name": "reserva",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "dtReserva": {
+      "type": "date",
+      "required": true
+    },
+    "dtPreReserva": {
+      "type": "date",
+      "required": true
+    },
+    "dtInicial": {
+      "type": "date",
+      "required": true
+    },
+    "dtFinal": {
+      "type": "date",
+      "required": true
+    },
+    "nmEvento": {
+      "type": "string",
+      "required": true
+    },
+    "inReserva": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "inPreReserva": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "sala": {
+      "type": "belongsTo",
+      "model": "sala",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    },
+    "usuario": {
+      "type": "belongsTo",
+      "model": "usuario",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

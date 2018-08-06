@@ -1,0 +1,39 @@
+{
+  "name": "tiposala",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "tpSala": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "salas": {
+      "type": "hasMany",
+      "model": "sala",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    },
+    "pavimento": {
+      "type": "belongsTo",
+      "model": "pavimento",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
