@@ -1,6 +1,6 @@
 <template>
   <q-page class="row q-pa-sm bg-grey-4">
-    {{filter.where}}
+    {{teste}}
     <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in CardPagination.Cards" :key="Card.id">
       <q-card class="bg-white q-pa-sm" style="height: 300px;">
         <!-- <q-card-media>
@@ -64,7 +64,8 @@ export default {
             fields: ['tpSala']
           }
         }
-      ]
+      ],
+      teste: ''
     }
   },
   watch: {
@@ -81,15 +82,16 @@ export default {
         let filter = JSON.parse(JSON.stringify(this.filter))
         filter.fields = this.fields
         filter.include = this.include
-        if (!filter.where.pavimentoId.inq.length) {
+        if (!filter.where.pavimentoId.inq.length || filter.where.pavimentoId.inq[0] === '') {
           delete filter.where.pavimentoId
         }
-        if (!filter.where.tiposalaId.inq.length) {
+        if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
           delete filter.where.tiposalaId
         }
-        if (!filter.where.id.inq.length) {
+        if (!filter.where.id.inq.length || filter.where.id.inq[0] === '') {
           delete filter.where.id
         }
+        this.teste = filter.where
         this.$axios.get('/salas', {
           params: {
             filter
