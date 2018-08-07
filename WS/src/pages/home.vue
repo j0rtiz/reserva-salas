@@ -1,6 +1,5 @@
 <template>
   <q-page class="row q-pa-sm bg-grey-4">
-    {{teste}}
     <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in CardPagination.Cards" :key="Card.id">
       <q-card class="bg-white q-pa-sm" style="height: 300px;">
         <!-- <q-card-media>
@@ -64,8 +63,7 @@ export default {
             fields: ['tpSala']
           }
         }
-      ],
-      teste: ''
+      ]
     }
   },
   watch: {
@@ -91,7 +89,6 @@ export default {
         if (!filter.where.id.inq.length || filter.where.id.inq[0] === '') {
           delete filter.where.id
         }
-        this.teste = filter.where
         this.$axios.get('/salas', {
           params: {
             filter
