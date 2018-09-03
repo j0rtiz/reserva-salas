@@ -2,12 +2,6 @@
   <q-page class="row q-pa-sm bg-grey-4">
     <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in CardPagination.Cards" :key="Card.id">
       <q-card class="bg-white q-pa-sm" style="height: 300px;">
-        <!-- <q-card-media>
-          <q-carousel v-if="Card.urlImagem.length" color="white" autoplay infinite arrows height="300px">
-            <q-carousel-slide v-for="(imagem, index) in Card.urlImagem" :key="index" :img-src="`/api/containers/locais/download/${imagem}`" />
-          </q-carousel>
-          <img v-else :src="'statics/404image.png'">
-        </q-card-media> -->
         <q-card-title class="bg-dark text-white uppercase">
           <strong>LIVRE</strong>
         </q-card-title>
@@ -28,11 +22,6 @@
             <strong>{{Card.nmEquip.join(', ')}}</strong>
           </p>
         </q-card-main>
-        <!-- <q-card-separator />
-        <q-card-actions align="end">
-          <q-btn color="dark" icon="edit" />
-          <q-btn color="negative" icon="delete" />
-        </q-card-actions> -->
       </q-card>
     </div>
     <!-- <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -49,19 +38,12 @@ export default {
   props: ['leftDrawer', 'filter'],
   data () {
     return {
-      fields: ['id', 'nrCapacidade', 'nmEquip', 'nrSala', 'pavimentoId', 'tiposalaId'],
       include: [
         {
-          relation: 'pavimento',
-          scope: {
-            fields: ['nmPav']
-          }
+          relation: 'pavimento'
         },
         {
-          relation: 'tiposala',
-          scope: {
-            fields: ['tpSala']
-          }
+          relation: 'tiposala'
         }
       ]
     }
@@ -78,11 +60,7 @@ export default {
     CardPagination () {
       return new Promise((resolve, reject) => {
         let filter = JSON.parse(JSON.stringify(this.filter))
-        filter.fields = this.fields
         filter.include = this.include
-        // if (!filter.where.pavimentoId.inq.length || filter.where.pavimentoId.inq[0] === '') {
-        //   delete filter.where.pavimentoId
-        // }
         if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
           delete filter.where.tiposalaId
         }

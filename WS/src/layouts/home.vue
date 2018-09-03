@@ -30,7 +30,7 @@
       </q-scroll-area>
     </q-layout-drawer>
     <q-page-container>
-      <router-view :filter="filter" :leftDrawer="leftDrawer" />
+      <router-view :filter="filter" :leftDrawer="leftDrawer" /> {{lstSalas}}
     </q-page-container>
   </q-layout>
 </template>
@@ -75,19 +75,6 @@ export default {
       this.filter.where.tiposalaId.inq.push(tpSala)
       this.asyncReload('lstSalas')
     }
-    // 'nrCapacidade' (nrCapacidade) {
-    //   this.nmEquip = ''
-    //   this.nrSala = ''
-    //   this.filter.where.id.inq = []
-    //   this.filter.where.id.inq.push(nrCapacidade)
-    //   this.asyncReload('lstNmEquipamentos')
-    // },
-    // 'nmEquip' (nmEquip) {
-    //   this.nrSala = ''
-    //   this.filter.where.id.inq = []
-    //   this.filter.where.id.inq.push(nmEquip)
-    //   this.asyncReload('lstNrSalas')
-    // }
   },
   asyncData: {
     lstTpSalas () {
