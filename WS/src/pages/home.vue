@@ -9,7 +9,7 @@
           <img v-else :src="'statics/404image.png'">
         </q-card-media> -->
         <q-card-title class="bg-dark text-white uppercase">
-          <strong>Livre</strong>
+          <strong>LIVRE</strong>
         </q-card-title>
         <q-card-main class="q-mt-md">
           <p>Sala:
@@ -80,14 +80,11 @@ export default {
         let filter = JSON.parse(JSON.stringify(this.filter))
         filter.fields = this.fields
         filter.include = this.include
-        if (!filter.where.pavimentoId.inq.length || filter.where.pavimentoId.inq[0] === '') {
-          delete filter.where.pavimentoId
-        }
+        // if (!filter.where.pavimentoId.inq.length || filter.where.pavimentoId.inq[0] === '') {
+        //   delete filter.where.pavimentoId
+        // }
         if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
           delete filter.where.tiposalaId
-        }
-        if (!filter.where.id.inq.length || filter.where.id.inq[0] === '') {
-          delete filter.where.id
         }
         this.$axios.get('/salas', {
           params: {

@@ -24,14 +24,6 @@
       "options": {
         "nestRemoting": true
       }
-    },
-    "pavimento": {
-      "type": "belongsTo",
-      "model": "pavimento",
-      "foreignKey": "",
-      "options": {
-        "nestRemoting": true
-      }
     }
   },
   "acls": [],

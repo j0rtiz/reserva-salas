@@ -24,14 +24,6 @@
       "options": {
         "nestRemoting": true
       }
-    },
-    "tiposalas": {
-      "type": "hasMany",
-      "model": "tiposala",
-      "foreignKey": "",
-      "options": {
-        "nestRemoting": true
-      }
     }
   },
   "acls": [],
