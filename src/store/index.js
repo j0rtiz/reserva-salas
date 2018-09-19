@@ -1,21 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-import example from './module-example'
-
+import createPersistedState from 'vuex-persistedstate'
+import session from './session'
 Vue.use(Vuex)
-
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation
- */
-
-export default function (/* { ssrContext } */) {
+export default function () {
   const Store = new Vuex.Store({
     modules: {
-      example
-    }
+      session
+    },
+    plugins: [createPersistedState()]
   })
-
   return Store
 }

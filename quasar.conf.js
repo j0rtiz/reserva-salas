@@ -6,10 +6,12 @@ module.exports = function (ctx) {
     plugins: [
       'i18n',
       'axios',
-      'senai',
+      'package',
+      'vue-acl',
       'vue-async-data-2',
       'vuelidate',
-      'paginate'
+      'paginate',
+      'vue-the-mask'
     ],
     css: [
       'app.styl'
@@ -26,6 +28,8 @@ module.exports = function (ctx) {
       scopeHoisting: true,
       vueRouterMode: 'history',
       distDir: '../../dev-test-ga/client',
+      publicPath: '/',
+      showProgress: true,
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
@@ -60,7 +64,6 @@ module.exports = function (ctx) {
     },
     // framework: 'all' --- includes everything; for dev only!
     framework: {
-      iconSet: 'material-icons',
       components: [
         'QBtn',
         'QCard',
@@ -85,6 +88,8 @@ module.exports = function (ctx) {
         'QSearch',
         'QScrollArea',
         'QTabs',
+        'QTab',
+        'QTabPane',
         'QToolbar',
         'QToolbarTitle',
         'QPopover',
@@ -108,23 +113,42 @@ module.exports = function (ctx) {
         'QIcon',
         'QCarousel',
         'QCarouselSlide',
-        'QCarouselControl'
+        'QCarouselControl',
+        'QBtnDropdown',
+        'QAutocomplete',
+        'QToggle',
+        'QColor',
+        'QRadio',
+        'QModal',
+        'QRating',
+        'QPopupEdit',
+        'QCheckbox',
+        'QCollapsible',
+        'QChipsInput'
       ],
       directives: [
-        'Ripple'
+        'Ripple',
+        'CloseOverlay'
       ],
       // Quasar plugins
       plugins: [
         'Notify',
         'Loading',
-        'Dialog'
+        'LocalStorage',
+        'Dialog',
+        'Screen'
       ],
-      // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
+      iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons',
       i18n: 'pt-br' // Quasar language
     },
     // animations: 'all' --- includes all animations
     animations: [
+      'fadeIn',
+      'fadeOut'
     ],
+    ssr: {
+      pwa: false
+    },
     pwa: {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {},

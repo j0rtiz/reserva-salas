@@ -8,6 +8,19 @@
 
 <script>
 export default {
-  name: 'LayoutLogin'
+  name: 'Login',
+  mounted () {
+    this.AutoLogin()
+  },
+  methods: {
+    AutoLogin () {
+      if (this.$q.localStorage.get.item('AutoLogin')) {
+        this.$router.push({
+          path: '/login/token',
+          query: this.$q.localStorage.get.item('AutoLogin')
+        })
+      }
+    }
+  }
 }
 </script>
