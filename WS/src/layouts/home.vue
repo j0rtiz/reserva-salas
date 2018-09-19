@@ -71,6 +71,10 @@ export default {
       this.nrCapacidade = ''
       this.nmEquip = ''
       this.nrSala = ''
+      this.lstSalas = []
+      this.lstNrCapacidades = []
+      this.lstNmEquipamentos = []
+      this.lstNrSalas = []
       this.filter.where.tiposalaId.inq = []
       this.filter.where.tiposalaId.inq.push(tpSala)
       this.asyncReload('lstSalas')
