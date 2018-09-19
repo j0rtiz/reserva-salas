@@ -27,7 +27,7 @@ module.exports = function (ctx) {
     build: {
       scopeHoisting: true,
       vueRouterMode: 'history',
-      distDir: '../../dev-test-ga/client',
+      distDir: '../dev-test-ga/client',
       publicPath: '/',
       showProgress: true,
       // vueCompiler: true,
