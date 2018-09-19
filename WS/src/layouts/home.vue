@@ -20,17 +20,19 @@
         <q-list no-border>
           <q-item>
             <q-item-main>
-              <q-select class="q-mb-lg" radio v-model="tpSala" color="dark" :options="lstTpSalas" placeholder="Tipo de sala" />
-              <q-select class="q-mb-lg" v-if="tpSala" radio v-model="nrCapacidade" color="dark" :options="lstNrCapacidades" :placeholder="lstNrCapacidades.length ? 'Capacidade' : 'Vazio'" />
-              <q-select class="q-mb-lg" v-if="nrCapacidade" radio v-model="nmEquip" color="dark" :options="lstNmEquipamentos" :placeholder="lstNmEquipamentos.length ? 'Equipamentos' : 'Vazio'" />
-              <q-select class="q-mb-lg" v-if="nmEquip" radio v-model="nrSala" color="dark" :options="lstNrSalas" :placeholder="lstNrSalas.length ? 'Sala' : 'Vazio'" />
+              <q-field label="Filtro" label-width="12">
+                <q-select class="q-my-lg" radio v-model="tpSala" color="dark" :options="lstTpSalas" placeholder="Tipo de sala" />
+                <q-select class="q-my-lg" v-if="tpSala" radio v-model="nrCapacidade" color="dark" :options="lstNrCapacidades" :placeholder="lstNrCapacidades.length ? 'Capacidade' : 'Vazio'" />
+                <q-select class="q-my-lg" v-if="nrCapacidade" radio v-model="nmEquip" color="dark" :options="lstNmEquipamentos" :placeholder="lstNmEquipamentos.length ? 'Equipamentos' : 'Vazio'" />
+                <q-select class="q-my-lg" v-if="nmEquip" radio v-model="nrSala" color="dark" :options="lstNrSalas" :placeholder="lstNrSalas.length ? 'Sala' : 'Vazio'" />
+              </q-field>
             </q-item-main>
           </q-item>
         </q-list>
       </q-scroll-area>
     </q-layout-drawer>
     <q-page-container>
-      <router-view :filter="filter" :leftDrawer="leftDrawer" /> {{lstSalas}}
+      <router-view :filter="filter" :leftDrawer="leftDrawer" />
     </q-page-container>
   </q-layout>
 </template>
@@ -43,7 +45,7 @@ export default {
   data () {
     return {
       desktop: this.$q.platform.is.desktop,
-      titulo: (this.$q.platform.is.desktop) ? this.$NodePackage.author : 'Fatec SENAI',
+      titulo: this.$q.platform.is.desktop ? this.$NodePackage.author : 'Fatec SENAI',
       subtitulo: this.$NodePackage.productName,
       filter: {
         where: {
@@ -53,12 +55,10 @@ export default {
         }
       },
       lstSalas: [],
-      lstNmPavs: [],
       lstTpSalas: [],
       lstNrCapacidades: [],
       lstNmEquipamentos: [],
       lstNrSalas: [],
-      nmPav: '',
       tpSala: '',
       nrCapacidade: '',
       nmEquip: '',
@@ -121,18 +121,6 @@ export default {
             resolve(Res.data)
           })
         }
-      })
-    },
-    lstNmPavs () {
-      return new Promise((resolve, reject) => {
-        this.$axios.get('/pavimentos').then(Res => {
-          resolve(Res.data.map(El => {
-            return {
-              label: El.nmPav,
-              value: El.id
-            }
-          }))
-        })
       })
     }
   }

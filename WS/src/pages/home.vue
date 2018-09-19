@@ -1,25 +1,63 @@
 <template>
   <q-page class="row q-pa-sm bg-grey-4">
-    <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in CardPagination.Cards" :key="Card.id">
-      <q-card class="bg-white q-pa-sm" style="height: 300px;">
+    <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in Cards" :key="Card.id">
+      <q-card class="bg-white q-pa-sm" style="min-height: 400px;">
         <q-card-title class="bg-dark text-white uppercase">
-          <strong>LIVRE</strong>
+          <q-list v-if="Card.reservas.length" no-border>
+            <q-item v-for="reserva in Card.reservas" :key="reserva.id" dense>
+              <q-item-side>
+                <q-item-tile avatar>
+                  <img v-if="reserva.inReserva" src="../statics/images/Red-ball-48.png">
+                  <img v-else-if="reserva.inPreReserva" src="../statics/images/Yellow-ball-48.png">
+                </q-item-tile>
+              </q-item-side>
+              <q-item-main>
+                <q-item-tile label>
+                  <strong v-if="reserva.inReserva">Reservada</strong>
+                  <strong v-else-if="reserva.inPreReserva">Pré reservada</strong>
+                </q-item-tile>
+              </q-item-main>
+            </q-item>
+          </q-list>
+          <q-list v-else no-border>
+            <q-item dense>
+              <q-item-side>
+                <q-item-tile avatar>
+                  <img src="../statics/images/Green-ball-48.png">
+                </q-item-tile>
+              </q-item-side>
+              <q-item-main>
+                <q-item-tile label>
+                  <strong>Disponível</strong>
+                </q-item-tile>
+              </q-item-main>
+            </q-item>
+          </q-list>
         </q-card-title>
         <q-card-main class="q-mt-md">
-          <p>Sala:
-            <strong>{{Card.nrSala}}</strong>
+          <p>
+            <strong>Sala:</strong>
+            {{Card.nrSala}}
           </p>
-          <p>Tipo:
-            <strong>{{Card.tiposala.tpSala}}</strong>
+          <p>
+            <strong>Tipo:</strong>
+            {{Card.tiposala.tpSala}}
           </p>
-          <p>Andar:
-            <strong>{{Card.pavimento.nmPav}}</strong>
+          <p>
+            <strong>Andar:</strong>
+            {{Card.pavimento.nmPav}}
           </p>
-          <p>Capacidade:
-            <strong>{{Card.nrCapacidade}}</strong>
+          <p>
+            <strong>Capacidade:</strong>
+            {{Card.nrCapacidade}}
           </p>
-          <p>Equipamentos:
-            <strong>{{Card.nmEquip.join(', ')}}</strong>
+          <p>
+            <strong>Equipamentos:</strong>
+            <q-list no-border>
+              <q-item v-for="nmEquip in Card.nmEquip" :key="nmEquip.id" dense>
+                <q-item-main :label="'&#10004; ' + nmEquip" />
+              </q-item>
+            </q-list>
           </p>
         </q-card-main>
       </q-card>
@@ -31,10 +69,10 @@
 </template>
 
 <script>
-import { CoreCardPaginationMixin } from '../mixins/CardPagination'
+import { CardsMixin } from '../mixins/Cards'
 export default {
   name: 'PageHome',
-  mixins: [CoreCardPaginationMixin],
+  mixins: [CardsMixin],
   props: ['leftDrawer', 'filter'],
   data () {
     return {
@@ -44,6 +82,9 @@ export default {
         },
         {
           relation: 'tiposala'
+        },
+        {
+          relation: 'reservas'
         }
       ]
     }
@@ -52,12 +93,12 @@ export default {
     filter: {
       deep: true,
       handler (filter) {
-        this.asyncReload('CardPagination')
+        this.asyncReload('Cards')
       }
     }
   },
   asyncData: {
-    CardPagination () {
+    Cards () {
       return new Promise((resolve, reject) => {
         let filter = JSON.parse(JSON.stringify(this.filter))
         filter.include = this.include
@@ -69,8 +110,8 @@ export default {
             filter
           }
         }).then(Res => {
-          this.CardPagination.Cards = Res.data
-          resolve(this.CardPagination)
+          this.Cards = Res.data
+          resolve(this.Cards)
         })
       })
     }

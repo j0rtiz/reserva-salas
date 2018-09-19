@@ -40,7 +40,7 @@ module.exports = function (ctx) {
       },
       env: ctx.dev
         ? { // so on dev we'll have
-          API: JSON.stringify('http://localhost:3000/api/')
+          API: JSON.stringify('/api')
         }
         : { // and on build (production):
           API: JSON.stringify('../api')
