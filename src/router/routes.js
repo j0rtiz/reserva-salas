@@ -1,17 +1,7 @@
-export default [
+const routes = [
   {
     path: '/',
     redirect: '/home'
-  },
-  {
-    path: '/home',
-    component: () => import('layouts/home'),
-    children: [
-      {
-        path: '/home',
-        component: () => import('pages/home')
-      }
-    ]
   },
   {
     path: '/login',
@@ -36,7 +26,26 @@ export default [
     ]
   },
   {
+    path: '/home',
+    component: () => import('layouts/index.vue'),
+    meta: { rule: 'isAdmin' },
+    children: [
+      {
+        path: '/home',
+        component: () => import('pages/index.vue'),
+        meta: { rule: 'isAdmin' }
+      },
+      {
+        path: '/editar/:id',
+        component: () => import('pages/editar.vue'),
+        meta: { rule: 'isAdmin' }
+      }
+    ]
+  },
+  {
     path: '*',
-    component: () => import('pages/404')
+    component: () => import('pages/404.vue'),
+    meta: { rule: 'isEveryone' }
   }
 ]
+export default routes
