@@ -26,7 +26,7 @@ export default {
         this.$q.localStorage.set('AutoLogin', this.$route.query)
         this.$router.push(this.$q.localStorage.get.item('urlGoTo'))
       }).catch(Err => {
-        this.$router.push('/login/')
+        this.$router.push('/login')
         let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
         this.$q.notify({
           type: 'negative',

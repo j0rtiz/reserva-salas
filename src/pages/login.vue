@@ -1,7 +1,7 @@
 <template>
   <q-page class="row flex-center fit bg-light">
     <q-card class="col-lg-4 col-md-5 col-sm-6 col-xs-10 bg-grey-4" :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'">
-      <q-card-title class="bg-primary text-white">
+      <q-card-title class="bg-dark text-white">
         <strong>{{$NodePackage.productName}}</strong>
       </q-card-title>
       <q-card-main>
