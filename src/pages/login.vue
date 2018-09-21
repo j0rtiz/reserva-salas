@@ -1,7 +1,7 @@
 <template>
-  <q-page class="row flex-center fit bg-light">
-    <q-card class="col-lg-4 col-md-5 col-sm-6 col-xs-10 bg-grey-4" :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'">
-      <q-card-title class="bg-dark text-white">
+  <q-page class="row flex-center fit bg-blue-grey-2">
+    <q-card class="col-lg-4 col-md-5 col-sm-6 col-xs-10 bg-white" :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'">
+      <q-card-title class="bg-primary text-white">
         <strong>{{$NodePackage.productName}}</strong>
       </q-card-title>
       <q-card-main>
@@ -9,7 +9,7 @@
         <q-input class="q-mt-lg q-mx-md border-light text-dark" type="password" placeholder="Senha" inverted-light color="white" v-model="formulario.password" @keyup.enter="Entrar" :error="$v.formulario.password.$error" @blur="$v.formulario.password.$touch" />
       </q-card-main>
       <q-card-actions align="center">
-        <q-btn class="q-mb-sm" color="dark" label="Entrar" @click="Entrar" />
+        <q-btn class="q-mb-sm" color="primary" label="Entrar" @click="Entrar" />
       </q-card-actions>
     </q-card>
   </q-page>

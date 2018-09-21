@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hhh lpr fff">
     <q-layout-header>
-      <q-toolbar color="dark" text-color="white" class="row">
+      <q-toolbar color="primary" text-color="white" class="row">
         <q-btn flat round dense icon="menu" @click="leftDrawer = !leftDrawer" />
         <q-toolbar-title>
           {{titulo}}
@@ -21,10 +21,10 @@
           <q-item>
             <q-item-main>
               <q-field label="Filtro" label-width="12">
-                <q-select class="q-my-lg" radio v-model="tpSala" color="dark" :options="lstTpSalas" placeholder="Tipo de sala" />
-                <q-select class="q-my-lg" v-if="tpSala" radio v-model="nrCapacidade" color="dark" :options="lstNrCapacidades" :placeholder="lstNrCapacidades.length ? 'Capacidade' : 'Vazio'" />
-                <q-select class="q-my-lg" v-if="nrCapacidade" radio v-model="nmEquip" color="dark" :options="lstNmEquipamentos" :placeholder="lstNmEquipamentos.length ? 'Equipamentos' : 'Vazio'" />
-                <q-select class="q-my-lg" v-if="nmEquip" radio v-model="nrSala" color="dark" :options="lstNrSalas" :placeholder="lstNrSalas.length ? 'Sala' : 'Vazio'" />
+                <q-select class="q-my-lg" radio v-model="tpSala" color="tertiary" :options="lstTpSalas" placeholder="Tipo de sala" />
+                <q-select class="q-my-lg" v-if="tpSala" radio v-model="nrCapacidade" color="tertiary" :options="lstNrCapacidades" :placeholder="lstNrCapacidades.length ? 'Capacidade' : 'Vazio'" />
+                <q-select class="q-my-lg" v-if="nrCapacidade" radio v-model="nmEquip" color="tertiary" :options="lstNmEquipamentos" :placeholder="lstNmEquipamentos.length ? 'Equipamentos' : 'Vazio'" />
+                <q-select class="q-my-lg" v-if="nmEquip" radio v-model="nrSala" color="tertiary" :options="lstNrSalas" :placeholder="lstNrSalas.length ? 'Sala' : 'Vazio'" />
               </q-field>
             </q-item-main>
           </q-item>

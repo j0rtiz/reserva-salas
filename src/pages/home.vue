@@ -1,8 +1,8 @@
 <template>
-  <q-page class="row q-pa-sm bg-grey-4">
-    <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-md' : 'col-xs-12 col-sm-6 col-md-3 q-pa-md'" v-for="Card in Cards" :key="Card.id">
-      <q-card class="bg-white q-pa-sm" style="min-height: 400px;">
-        <q-card-title class="bg-dark text-white uppercase">
+  <q-page class="row q-pa-sm bg-blue-grey-2">
+    <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-4 q-pa-sm' : 'col-xs-12 col-sm-6 col-md-3 q-pa-sm'" v-for="Card in Cards" :key="Card.id">
+      <q-card class="bg-white" style="height: 300px;">
+        <q-card-title class="bg-secondary text-white uppercase q-pa-none">
           <q-list v-if="Card.reservas.length" no-border>
             <q-item v-for="reserva in Card.reservas" :key="reserva.id" dense>
               <q-item-side>
@@ -34,7 +34,7 @@
             </q-item>
           </q-list>
         </q-card-title>
-        <q-card-main class="q-mt-md">
+        <q-card-main class="q-mt-md text-tertiary">
           <p>
             <strong>Sala:</strong>
             {{Card.nrSala}}
