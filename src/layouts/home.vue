@@ -12,7 +12,7 @@
         <!-- <div :class="desktop ? 'col-md-2' : 'col-xs-5'">
           <q-search v-model="filter.where.nrSala.like" clearable inverted color="none" placeholder="Pesquisar" />
         </div> -->
-        <!-- <perfilmini/> -->
+        <perfilmini/>
       </q-toolbar>
     </q-layout-header>
     <q-layout-drawer side="left" v-model="leftDrawer">
@@ -38,10 +38,10 @@
 </template>
 
 <script>
-// import perfilmini from '../components/perfilmini'
+import perfilmini from '../components/perfilmini'
 export default {
   name: 'LayoutHome',
-  // components: { perfilmini },
+  components: { perfilmini },
   data () {
     return {
       desktop: this.$q.platform.is.desktop,
