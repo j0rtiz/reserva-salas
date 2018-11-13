@@ -6,13 +6,11 @@
 export default {
   name: 'Token',
   mounted () {
+    this.$q.loading.show()
     this.Token()
   },
   methods: {
     Token () {
-      this.$q.loading.show({
-        message: 'Iniciando sessão...'
-      })
       this.$axios.defaults.headers.common['Authorization'] = this.$route.query['accessToken']
       this.$axios.get(`/usuarios/${this.$route.query['usuarioId']}`).then(Res => {
         Res.data.accessToken = this.$route.query['accessToken']
@@ -22,7 +20,6 @@ export default {
         this.$acl.change('admin')
         // this.$acl.change('authenticated')
 
-        this.$q.loading.hide()
         this.$q.localStorage.set('AutoLogin', this.$route.query)
         this.$router.push(this.$q.localStorage.get.item('urlGoTo'))
       }).catch(Err => {
@@ -34,6 +31,7 @@ export default {
           message: erro
         })
       })
+      this.$q.loading.hide()
     }
   }
 }

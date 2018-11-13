@@ -1,22 +1,34 @@
 <template>
-  <q-page class="row flex-center fit bg-blue-grey-2">
-    <q-card class="col-lg-4 col-md-5 col-sm-6 col-xs-10 bg-white" :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'">
-      <q-card-title class="bg-primary text-white">
-        <strong>{{$NodePackage.productName}}</strong>
-      </q-card-title>
-      <q-card-main>
-        <q-input class="q-mt-lg q-mx-md border-light text-dark" placeholder="Usuário" inverted-light color="white" v-model="formulario.username" @keyup.enter="Entrar" :error="$v.formulario.username.$error" @blur="$v.formulario.username.$touch" />
-        <q-input class="q-mt-lg q-mx-md border-light text-dark" type="password" placeholder="Senha" inverted-light color="white" v-model="formulario.password" @keyup.enter="Entrar" :error="$v.formulario.password.$error" @blur="$v.formulario.password.$touch" />
-      </q-card-main>
-      <q-card-actions align="center">
-        <q-btn class="q-mb-sm" color="primary" label="Entrar" @click="Entrar" />
-      </q-card-actions>
-    </q-card>
+  <q-page class="row bg-grey-4" :class="$q.screen.sm || $q.screen.xs ? 'justify-between items-stretch' : 'flex-center fit'">
+    <transition appear enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
+      <q-card class="col-lg-4 col-md-5 col-sm-12 col-xs-12 bg-white" :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'" :style="$q.screen.sm || $q.screen.xs ? 'border-radius: 0;' : ''">
+        <q-card-title class="bg-primary text-white q-py-sm">
+          <strong>{{$NodePackage.productName}}</strong>
+        </q-card-title>
+        <q-card-main class="row q-mt-sm">
+          <q-field class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-xs-12 q-pa-sm" label="Usuário" label-width="12" :error="$v.formulario.username.$error">
+            <q-input color="primary" v-model="formulario.username" autofocus clearable @blur="$v.formulario.username.$touch" />
+            <div slot="helper" v-if="!$v.formulario.username.required && $v.formulario.username.$error">Campo obrigatório.</div>
+            <div slot="helper" v-if="!$v.formulario.username.minLength">O nome de usuário não pode conter menos que {{$v.formulario.username.$params.minLength.min}} caracteres.</div>
+            <div slot="helper" v-if="!$v.formulario.username.maxLength">O nome de usuário não pode conter mais que {{$v.formulario.username.$params.maxLength.max}} caracteres.</div>
+          </q-field>
+          <q-field class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-xs-12 q-pa-sm" label="Senha" label-width="12" :error="$v.formulario.password.$error">
+            <q-input color="primary" v-model="formulario.password" type="password" @keyup.enter="Entrar" @blur="$v.formulario.password.$touch" />
+            <div slot="helper" v-if="!$v.formulario.password.required && $v.formulario.password.$error">Campo obrigatório.</div>
+            <div slot="helper" v-if="!$v.formulario.password.minLength">A senha não pode conter menos que {{$v.formulario.password.$params.minLength.min}} caracteres.</div>
+            <div slot="helper" v-if="!$v.formulario.password.maxLength">A senha não pode conter mais que {{$v.formulario.password.$params.maxLength.max}} caracteres.</div>
+          </q-field>
+        </q-card-main>
+        <q-card-actions class="q-ma-sm" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
+          <q-btn class="full-width" color="primary" label="Entrar" icon="done" size="form" @click="Entrar" />
+        </q-card-actions>
+      </q-card>
+    </transition>
   </q-page>
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
   name: 'Login',
   data () {
@@ -31,10 +43,14 @@ export default {
   validations: {
     formulario: {
       username: {
-        required
+        required,
+        minLength: minLength(5),
+        maxLength: maxLength(25)
       },
       password: {
-        required
+        required,
+        minLength: minLength(5),
+        maxLength: maxLength(25)
       }
     }
   },

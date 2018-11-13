@@ -2,17 +2,17 @@
   <q-layout view="hhh lpr fff">
     <q-layout-header>
       <q-toolbar color="primary" text-color="white" class="row">
-        <q-btn flat round dense icon="menu" @click="leftDrawer = !leftDrawer" />
+        <!-- <q-btn flat round dense icon="menu" @click="leftDrawer = !leftDrawer" /> -->
         <q-toolbar-title>
-          {{titulo}}
+          <!-- {{titulo}} -->
           <span slot="subtitle">
-            {{subtitulo}}
+            <!-- {{subtitulo}} -->
           </span>
         </q-toolbar-title>
         <!-- <div :class="desktop ? 'col-md-2' : 'col-xs-5'">
           <q-search v-model="filter.where.nrSala.like" clearable inverted color="none" placeholder="Pesquisar" />
         </div> -->
-        <perfilmini/>
+        <perfilmini />
       </q-toolbar>
     </q-layout-header>
     <q-layout-drawer side="left" v-model="leftDrawer">
@@ -63,7 +63,7 @@ export default {
       nrCapacidade: '',
       nmEquip: '',
       nrSala: '',
-      leftDrawer: true
+      leftDrawer: false
     }
   },
   watch: {

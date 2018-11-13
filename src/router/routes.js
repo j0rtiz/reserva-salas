@@ -28,16 +28,16 @@ const routes = [
   {
     path: '/home',
     component: () => import('layouts/home.vue'),
-    meta: { rule: 'isAdmin' },
+    meta: { rule: 'isEveryone' },
     children: [
       {
         path: '/home',
         component: () => import('pages/home.vue'),
-        meta: { rule: 'isAdmin' }
+        meta: { rule: 'isEveryone' }
       },
       {
-        path: '/editar/:id',
-        component: () => import('pages/editar.vue'),
+        path: '/reserva/:id',
+        component: () => import('pages/reserva.vue'),
         meta: { rule: 'isAdmin' }
       }
     ]

@@ -1,10 +1,16 @@
 <template>
-  <q-page class="row q-pa-sm bg-blue-grey-2">
+  <q-page class="row q-pa-sm bg-light">
     <div :class="leftDrawer ? 'col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-4 q-pa-sm' : 'col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 q-pa-sm'" v-for="Card in Cards" :key="Card.id">
-      <q-card class="bg-white" style="height: 300px;">
+      <q-card class="bg-white">
         <q-card-title class="bg-secondary text-tertiary uppercase q-pa-none">
+          <q-btn class="q-mr-sm" slot="right" flat round dense color="tertiary" icon="event" to="/reserva/0" />
           <q-list v-if="Card.reservas.length" no-border>
             <q-item v-for="reserva in Card.reservas" :key="reserva.id" dense>
+              <strong>
+                {{reserva.dtInicial}}
+                <br />
+                {{reserva.dtFinal}}
+              </strong>
               <q-item-side>
                 <q-item-tile avatar>
                   <img v-if="reserva.inReserva" src="../statics/images/Red-ball-48.png">
