@@ -1,6 +1,6 @@
 <template>
   <q-page class="row q-pa-sm bg-blue-grey-2">
-    <q-modal v-model="reserva" minimized>
+    <q-modal v-model="reserva" content-classes="col-5">
       <reserva />
     </q-modal>
     <div class="col-4 q-pa-sm" v-for="Card in Cards" :key="Card.id">
