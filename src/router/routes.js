@@ -34,11 +34,6 @@ const routes = [
         path: '/home',
         component: () => import('pages/home.vue'),
         meta: { rule: 'isEveryone' }
-      },
-      {
-        path: '/reserva/:id',
-        component: () => import('pages/reserva.vue'),
-        meta: { rule: 'isAdmin' }
       }
     ]
   },

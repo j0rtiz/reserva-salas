@@ -4,14 +4,11 @@
       <q-toolbar color="primary" text-color="white" class="row">
         <!-- <q-btn flat round dense icon="menu" @click="leftDrawer = !leftDrawer" /> -->
         <q-toolbar-title>
-          <!-- {{titulo}} -->
+          {{titulo}}
           <span slot="subtitle">
-            <!-- {{subtitulo}} -->
+            {{subtitulo}}
           </span>
         </q-toolbar-title>
-        <!-- <div :class="desktop ? 'col-md-2' : 'col-xs-5'">
-          <q-search v-model="filter.where.nrSala.like" clearable inverted color="none" placeholder="Pesquisar" />
-        </div> -->
         <perfilmini />
       </q-toolbar>
     </q-layout-header>

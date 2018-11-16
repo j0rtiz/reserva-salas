@@ -1,31 +1,31 @@
 <template>
-  <q-page v-if="listaSalas.length || !id" class="row bg-light" :class="$q.screen.sm || $q.screen.xs ? 'justify-between items-stretch' : 'flex-center fit'">
+  <q-page>
     <transition appear enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutRight">
-      <q-card class="col-xl-6 col-lg-8 col-md-10 col-sm-12 col-xs-12 bg-white" :style="$q.screen.sm || $q.screen.xs ? 'border-radius: 0;' : ''">
-        <q-card-title class="bg-secondary text-white text-weight-thin q-py-sm">
-          <strong>{{id ? 'Editar' : 'Nova'}} reserva</strong>
+      <q-card class="bg-white" :style="$q.screen.sm || $q.screen.xs ? 'border-radius: 0;' : ''">
+        <q-card-title class="bg-secondary text-white text-center q-py-sm">
+          <span class="uppercase text-weight-medium">{{id ? 'Editar' : 'Nova'}} reserva</span>
         </q-card-title>
         <q-card-main class="row">
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" :error="$v.formulario.dtInicial.$error">
+          <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtInicial.$error">
             <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
             <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" :error="$v.formulario.dtFinal.$error">
+          <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtFinal.$error">
             <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dataMin" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
             <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
+          <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
             <q-input float-label="Evento" color="primary" clearable v-model="formulario.nmEvento" upper-case @blur="$v.formulario.nmEvento.$touch" />
             <div slot="helper" v-if="!$v.formulario.nmEvento.required && $v.formulario.nmEvento.$error">Campo obrigatório.</div>
             <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
             <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" :error="$v.formulario.salaId.$error">
+          <q-field class="col-12 q-pa-sm" :error="$v.formulario.salaId.$error">
             <q-select float-label="Sala" color="primary" v-model="formulario.salaId" :options="listaSalas" @blur="$v.formulario.salaId.$touch" />
             <div slot="helper" v-if="!$v.formulario.salaId.required && $v.formulario.salaId.$error">Campo obrigatório.</div>
           </q-field>
         </q-card-main>
-        <q-card-actions class="q-mx-md q-mb-md" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
+        <q-card-actions class="q-pt-xl" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
           <q-btn class="full-width" color="secondary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
         </q-card-actions>
       </q-card>
