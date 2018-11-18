@@ -1,7 +1,8 @@
 <template>
   <q-card class="bg-primary">
     <q-card-title class="bg-primary text-white q-py-sm">
-      <span class="uppercase text-weight-medium">{{id ? 'Editar' : 'Nova'}} reserva</span>
+      <q-icon class="q-pr-sm" name="event" size="23px" />
+      <span class="uppercase q-subheading text-weight-bold">{{id ? 'Editar' : 'Nova'}} reserva</span>
     </q-card-title>
     <q-card-main class="row bg-white">
       <q-field class="col-12 q-pa-sm q-pt-md" :error="$v.formulario.dtInicial.$error">
