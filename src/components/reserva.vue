@@ -6,11 +6,11 @@
     </q-card-title>
     <q-card-main class="row bg-white">
       <q-field class="col-12 q-pa-sm q-pt-md" :error="$v.formulario.dtInicial.$error">
-        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
+        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
         <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
+        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
@@ -50,7 +50,7 @@ export default {
       },
       sala: `${this.Card.nrSala} - ${this.Card.tiposala.tpSala}`.toUpperCase(),
       dtInicial: Date.now(),
-      dtFinal: date.addToDate(Date.now(), { hours: 1 })
+      dtFinal: ''
     }
   },
   validations: {
@@ -77,6 +77,12 @@ export default {
         this.formulario.salaId = ''
         this.$v.formulario.$reset()
       }
+    },
+    'formulario.dtInicial': {
+      deep: true,
+      handler (dtInicial) {
+        this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
+      }
     }
   },
   methods: {
@@ -91,6 +97,7 @@ export default {
             timeout: 1000,
             message: 'Salvo com sucesso!'
           })
+          this.$emit('modal')
         }).catch(Err => {
           let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
           this.$q.notify({

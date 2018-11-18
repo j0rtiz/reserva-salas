@@ -2,7 +2,7 @@
   <q-page class="row q-pa-sm bg-blue-grey-2">
     <div class="col-3 q-pa-sm" v-for="Card in Cards" :key="Card.id">
       <q-modal v-model="modal" content-classes="col-3 bg-primary">
-        <reserva :Card="Card" :modal="modal" />
+        <reserva :Card="Card" :modal="modal" @modal="Modal" />
       </q-modal>
       <q-card class="non-selectable" color="white" style="border-top: 4px solid #39b54a; border-radius: 5px;">
         <q-card-title class="bg-light uppercase no-padding">
@@ -125,6 +125,9 @@ export default {
   methods: {
     DataReserva (dtInicial, dtFinal) {
       return date.isBetweenDates(Date.now(), dtInicial, dtFinal, { inclusiveFrom: true, inclusiveTo: true })
+    },
+    Modal () {
+      this.modal = false
     }
   },
   asyncData: {
