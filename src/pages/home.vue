@@ -1,6 +1,6 @@
 <template>
   <q-page class="row q-pa-sm bg-blue-grey-2">
-    <div class="col-3 q-pa-sm" v-for="Card in Cards" :key="Card.id">
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm" v-for="Card in Cards" :key="Card.id">
       <q-modal v-model="modal" content-classes="col-3 bg-primary">
         <reserva :Card="Card" :modal="modal" @modal="Modal" />
       </q-modal>
@@ -92,18 +92,7 @@ export default {
   props: ['leftDrawer', 'filter'],
   data () {
     return {
-      modal: false,
-      include: [
-        {
-          relation: 'pavimento'
-        },
-        {
-          relation: 'tiposala'
-        },
-        {
-          relation: 'reservas'
-        }
-      ]
+      modal: false
     }
   },
   watch: {
@@ -134,9 +123,10 @@ export default {
     Cards () {
       return new Promise((resolve, reject) => {
         let filter = JSON.parse(JSON.stringify(this.filter))
-        filter.include = this.include
+        filter.include = [{ relation: 'pavimento' }, { relation: 'tiposala' }, { relation: 'reservas' }]
+        filter.order = 'nrSala ASC'
         if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
-          delete filter.where.tiposalaId
+          delete filter.where
         }
         this.$axios.get('/salas', {
           params: {
