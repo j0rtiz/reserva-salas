@@ -1,15 +1,15 @@
 <template>
-  <q-card class="bg-white">
-    <q-card-title class="bg-secondary text-white text-center q-py-sm">
+  <q-card class="bg-primary">
+    <q-card-title class="bg-primary text-white q-py-sm">
       <span class="uppercase text-weight-medium">{{id ? 'Editar' : 'Nova'}} reserva</span>
     </q-card-title>
-    <q-card-main class="row">
-      <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtInicial.$error">
-        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
+    <q-card-main class="row bg-white">
+      <q-field class="col-12 q-pa-sm q-pt-md" :error="$v.formulario.dtInicial.$error">
+        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
         <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dataMin" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
+        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - hh:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
@@ -18,13 +18,12 @@
         <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
-      <q-field class="col-12 q-pa-sm" :error="$v.formulario.salaId.$error">
-        <q-select float-label="Sala" color="primary" v-model="formulario.salaId" :options="listaSalas" @blur="$v.formulario.salaId.$touch" />
-        <div slot="helper" v-if="!$v.formulario.salaId.required && $v.formulario.salaId.$error">Campo obrigatório.</div>
+      <q-field class="col-12 q-pa-sm">
+        <q-input float-label="Sala" color="primary" v-model="sala" readonly />
       </q-field>
     </q-card-main>
-    <q-card-actions :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
-      <q-btn class="full-width" color="secondary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
+    <q-card-actions class="bg-white q-pt-lg" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
+      <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
     </q-card-actions>
   </q-card>
 </template>
@@ -34,22 +33,23 @@ import { date } from 'quasar'
 import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
   name: 'Reserva',
+  props: ['Card', 'modal'],
   data () {
     return {
       id: Number(this.$route.params.id),
       formulario: {
-        dtReserva: Date.now(),
         dtPreReserva: Date.now(),
         dtInicial: '',
         dtFinal: '',
         nmEvento: '',
-        inReserva: true,
-        inPreReserva: false,
-        salaId: '',
+        inReserva: false,
+        inPreReserva: true,
+        salaId: this.Card.id,
         usuarioId: this.$store.state.session.id
       },
-      dataMin: '',
-      listaSalas: []
+      sala: `${this.Card.nrSala} - ${this.Card.tiposala.tpSala}`.toUpperCase(),
+      dtInicial: Date.now(),
+      dtFinal: date.addToDate(Date.now(), { hours: 1 })
     }
   },
   validations: {
@@ -64,49 +64,21 @@ export default {
         required,
         minLength: minLength(5),
         maxLength: maxLength(30)
-      },
-      salaId: {
-        required
       }
     }
   },
-  mounted () {
-    this.$q.loading.show()
-    this.Salas()
-  },
   watch: {
-    'formulario.dtInicial' (dtInicial) {
-      this.dataMin = date.addToDate(dtInicial, { days: 1 })
+    modal (modal) {
+      if (!modal) {
+        this.formulario.dtInicial = ''
+        this.formulario.dtFinal = ''
+        this.formulario.nmEvento = ''
+        this.formulario.salaId = ''
+        this.$v.formulario.$reset()
+      }
     }
   },
   methods: {
-    Salas () {
-      this.$axios.get('/salas', {
-        params: {
-          filter: {
-            include: {
-              relation: 'tiposala'
-            }
-          }
-        }
-      }).then(Res => {
-        this.listaSalas = []
-        Res.data.forEach(sala => {
-          this.listaSalas.push({
-            label: `${sala.nrSala} - ${sala.tiposala.tpSala}`,
-            value: sala.id
-          })
-        })
-        this.$q.loading.hide()
-      }).catch(Err => {
-        let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-        this.$q.notify({
-          color: 'negative',
-          timeout: 1000,
-          message: erro
-        })
-      })
-    },
     Salvar (id) {
       this.$v.formulario.$touch()
       if (!this.$v.formulario.$error) {
@@ -118,7 +90,6 @@ export default {
             timeout: 1000,
             message: 'Salvo com sucesso!'
           })
-          this.$router.push('/')
         }).catch(Err => {
           let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
           this.$q.notify({

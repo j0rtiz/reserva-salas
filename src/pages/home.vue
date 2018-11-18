@@ -1,24 +1,24 @@
 <template>
   <q-page class="row q-pa-sm bg-blue-grey-2">
-    <q-modal v-model="reserva" content-classes="col-5">
-      <reserva />
-    </q-modal>
-    <div class="col-4 q-pa-sm" v-for="Card in Cards" :key="Card.id">
+    <div class="col-3 q-pa-sm" v-for="Card in Cards" :key="Card.id">
+      <q-modal v-model="modal" content-classes="col-3 bg-primary">
+        <reserva :Card="Card" :modal="modal" />
+      </q-modal>
       <q-card class="bg-white">
         <q-card-title class="bg-secondary text-tertiary uppercase q-pa-none">
-          <q-btn class="q-mr-sm" slot="right" flat round dense color="tertiary" icon="event" @click="reserva = !reserva" />
+          <q-btn class="q-mr-sm" slot="right" flat round dense color="tertiary" icon="event" @click="modal = !modal" />
           <q-list v-if="Card.reservas.length" no-border>
-            <q-item v-for="reserva in Card.reservas" :key="reserva.id" dense>
+            <q-item v-if="DataReserva(reserva.dtInicial, reserva.dtFinal)" v-for="reserva in Card.reservas" :key="reserva.id" dense>
               <q-item-side>
                 <q-item-tile avatar>
-                  <img v-if="reserva.inReserva && DataReserva(reserva.dtInicial, reserva.dtFinal)" src="../statics/images/Red-ball-48.png">
-                  <img v-else-if="reserva.inPreReserva && DataReserva(reserva.dtInicial, reserva.dtFinal)" src="../statics/images/Yellow-ball-48.png">
+                  <img v-if="reserva.inReserva" src="../statics/images/Red-ball-48.png">
+                  <img v-else-if="reserva.inPreReserva" src="../statics/images/Yellow-ball-48.png">
                 </q-item-tile>
               </q-item-side>
               <q-item-main>
                 <q-item-tile label>
-                  <span v-if="reserva.inReserva && DataReserva(reserva.dtInicial, reserva.dtFinal)" class="text-tertiary q-subheading text-weight-bold">Reservada</span>
-                  <span v-else-if="reserva.inPreReserva && DataReserva(reserva.dtInicial, reserva.dtFinal)" class="text-tertiary q-subheading text-weight-bold">Pré reservada</span>
+                  <span v-if="reserva.inReserva" class="text-tertiary q-subheading text-weight-bold">Reservada</span>
+                  <span v-else-if="reserva.inPreReserva" class="text-tertiary q-subheading text-weight-bold">Pré reservada</span>
                 </q-item-tile>
                 <q-item-tile class="text-no-wrap no-margin" sublabel>
                   <span class="text-tertiary q-caption">{{reserva.dtInicial, reserva.dtFinal | FormataData}}</span>
@@ -83,7 +83,7 @@ export default {
   props: ['leftDrawer', 'filter'],
   data () {
     return {
-      reserva: false,
+      modal: false,
       include: [
         {
           relation: 'pavimento'
