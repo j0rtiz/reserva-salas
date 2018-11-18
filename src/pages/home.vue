@@ -4,9 +4,9 @@
       <q-modal v-model="modal" content-classes="col-3 bg-primary">
         <reserva :Card="Card" :modal="modal" />
       </q-modal>
-      <q-card class="bg-white">
-        <q-card-title class="bg-secondary text-tertiary uppercase q-pa-none">
-          <q-btn class="q-mr-sm" slot="right" flat round dense color="tertiary" icon="event" @click="modal = !modal" />
+      <q-card class="non-selectable" color="white" style="border-top: 4px solid #39b54a; border-radius: 5px;">
+        <q-card-title class="bg-light uppercase no-padding">
+          <q-btn class="q-mr-sm" slot="right" flat round dense color="primary" icon="event" @click="modal = !modal" />
           <q-list v-if="Card.reservas.length" no-border>
             <q-item v-if="DataReserva(reserva.dtInicial, reserva.dtFinal)" v-for="reserva in Card.reservas" :key="reserva.id" dense>
               <q-item-side>
@@ -17,11 +17,8 @@
               </q-item-side>
               <q-item-main>
                 <q-item-tile label>
-                  <span v-if="reserva.inReserva" class="text-tertiary q-subheading text-weight-bold">Reservada</span>
-                  <span v-else-if="reserva.inPreReserva" class="text-tertiary q-subheading text-weight-bold">Pré reservada</span>
-                </q-item-tile>
-                <q-item-tile class="text-no-wrap no-margin" sublabel>
-                  <span class="text-tertiary q-caption">{{reserva.dtInicial, reserva.dtFinal | FormataData}}</span>
+                  <span v-if="reserva.inReserva" class="text-primary q-subheading text-weight-bold">Reservada</span>
+                  <span v-else-if="reserva.inPreReserva" class="text-primary q-subheading text-weight-bold">Pré reservada</span>
                 </q-item-tile>
               </q-item-main>
             </q-item>
@@ -41,7 +38,8 @@
             </q-item>
           </q-list>
         </q-card-title>
-        <q-card-main class="q-mt-md text-tertiary">
+        <q-card-separator class="bg-grey-4" />
+        <q-card-main class="text-primary q-pb-none">
           <p>
             <strong>Sala:</strong>
             {{Card.nrSala}}
@@ -58,15 +56,26 @@
             <strong>Capacidade:</strong>
             {{Card.nrCapacidade}}
           </p>
-          <p>
+          <p class="q-mb-sm">
             <strong>Equipamentos:</strong>
-            <q-list no-border>
-              <q-item v-for="nmEquip in Card.nmEquip" :key="nmEquip.id" dense>
-                <q-item-main :label="'&#10004; ' + nmEquip" />
+            <q-list dense no-border>
+              <q-item v-for="nmEquip in Card.nmEquip" :key="nmEquip.id">
+                <q-item-main :label="`&#10004; ${nmEquip}`" />
               </q-item>
             </q-list>
           </p>
         </q-card-main>
+        <q-card-separator class="bg-grey-4" />
+        <q-card-title class="uppercase no-padding">
+          <div v-if="DataReserva(reserva.dtInicial, reserva.dtFinal)" class="row text-center q-body-1" v-for="reserva in Card.reservas" :key="reserva.id">
+            <strong class="col-6 bg-primary text-white">
+              {{reserva.dtInicial | FormataDataInicial}}<span class="lowercase">h</span>
+            </strong>
+            <strong class="col-6 bg-secondary text-white">
+              {{reserva.dtFinal | FormataDataFinal}}<span class="lowercase">h</span>
+            </strong>
+          </div>
+        </q-card-title>
       </q-card>
     </div>
   </q-page>
@@ -106,8 +115,11 @@ export default {
     }
   },
   filters: {
-    FormataData (dtInicial, dtFinal) {
-      return `de ${date.formatDate(dtInicial, 'DD/MM/YYYY')} - ${date.formatDate(dtInicial, 'hh:mm')}h até ${date.formatDate(dtFinal, 'DD/MM/YYYY')} - ${date.formatDate(dtFinal, 'hh:mm')}h`
+    FormataDataInicial (dtInicial) {
+      return `${date.formatDate(dtInicial, 'DD/MM/YYYY')} - ${date.formatDate(dtInicial, 'HH:mm')}`
+    },
+    FormataDataFinal (dtFinal) {
+      return `${date.formatDate(dtFinal, 'DD/MM/YYYY')} - ${date.formatDate(dtFinal, 'HH:mm')}`
     }
   },
   methods: {
