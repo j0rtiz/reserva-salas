@@ -1,12 +1,12 @@
 <template>
   <q-page class="row q-pa-sm bg-blue-grey-2">
+    <q-modal v-if="Card" v-model="modal" content-classes="col-3 bg-primary">
+      <reserva :Card="Card" :modal="modal" @modal="Modal" />
+    </q-modal>
     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm" v-for="Card in Cards" :key="Card.id">
-      <q-modal v-model="modal" content-classes="col-3 bg-primary">
-        <reserva :Card="Card" :modal="modal" @modal="Modal" />
-      </q-modal>
       <q-card class="non-selectable" color="white" style="border-top: 4px solid #39b54a; border-radius: 5px;">
         <q-card-title class="bg-light uppercase no-padding">
-          <q-btn class="q-mr-sm" slot="right" flat round dense color="primary" icon="event" @click="modal = !modal" />
+          <q-btn class="q-mr-sm" slot="right" flat round dense color="primary" icon="event" @click="Reserva(Card)" />
           <q-list v-if="Card.reservas.length" no-border>
             <q-item v-if="DataReserva(reserva.dtInicial, reserva.dtFinal)" v-for="reserva in Card.reservas" :key="reserva.id" dense>
               <q-item-side>
@@ -92,7 +92,8 @@ export default {
   props: ['leftDrawer', 'filter'],
   data () {
     return {
-      modal: false
+      modal: false,
+      Card: null
     }
   },
   watch: {
@@ -117,6 +118,10 @@ export default {
     },
     Modal () {
       this.modal = false
+    },
+    Reserva (Card) {
+      this.modal = !this.modal
+      this.Card = Card
     }
   },
   asyncData: {

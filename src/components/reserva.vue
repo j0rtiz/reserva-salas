@@ -20,7 +20,7 @@
         <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm">
-        <q-input float-label="Sala" color="primary" v-model="sala" readonly />
+        <q-input float-label="Sala" color="primary" v-model="sala" disable />
       </q-field>
     </q-card-main>
     <q-card-actions class="bg-white q-pt-lg" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
@@ -48,9 +48,9 @@ export default {
         salaId: this.Card.id,
         usuarioId: this.$store.state.session.id
       },
-      sala: `${this.Card.nrSala} - ${this.Card.tiposala.tpSala}`.toUpperCase(),
       dtInicial: Date.now(),
-      dtFinal: ''
+      dtFinal: '',
+      sala: `${this.Card.nrSala} - ${this.Card.tiposala.tpSala}`.toUpperCase()
     }
   },
   validations: {
@@ -69,6 +69,10 @@ export default {
     }
   },
   watch: {
+    Card (Card) {
+      this.formulario.salaId = Card.id
+      this.sala = `${Card.nrSala} - ${Card.tiposala.tpSala}`.toUpperCase()
+    },
     modal (modal) {
       if (!modal) {
         this.formulario.dtInicial = ''
