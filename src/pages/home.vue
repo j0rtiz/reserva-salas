@@ -28,37 +28,35 @@ export default {
     filter: {
       deep: true,
       handler (filter) {
-        this.asyncReload('Cards')
+        this.Salas()
       }
     }
+  },
+  mounted () {
+    this.Salas()
   },
   methods: {
     Modal () {
       this.modal = false
-      this.asyncReload('Cards')
+      this.Salas()
     },
     Reservar (sala) {
       this.modal = !this.modal
       this.sala = sala
-    }
-  },
-  asyncData: {
-    Cards () {
-      return new Promise((resolve, reject) => {
-        let filter = JSON.parse(JSON.stringify(this.filter))
-        filter.include = [{ relation: 'pavimento' }, { relation: 'tiposala' }, { relation: 'reservas' }]
-        filter.order = 'nrSala ASC'
-        if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
-          delete filter.where
+    },
+    Salas () {
+      let filter = JSON.parse(JSON.stringify(this.filter))
+      filter.include = [{ relation: 'pavimento' }, { relation: 'tiposala' }, { relation: 'reservas' }]
+      filter.order = 'nrSala ASC'
+      if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
+        delete filter.where
+      }
+      this.$axios.get('/salas', {
+        params: {
+          filter
         }
-        this.$axios.get('/salas', {
-          params: {
-            filter
-          }
-        }).then(Res => {
-          this.Cards = Res.data
-          resolve(this.Cards)
-        })
+      }).then(Res => {
+        this.Cards = Res.data
       })
     }
   }
