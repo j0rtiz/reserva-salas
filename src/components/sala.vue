@@ -1,5 +1,5 @@
 <template>
-  <q-card class="non-selectable" color="light" style="border-top: 4px solid #39b54a; border-radius: 5px;">
+  <q-card class="non-selectable" color="light" :style="inReserva ? bordaVermelha : inPreReserva ? bordaAmarela : bordaVerde">
     <q-card-title class="bg-light uppercase no-padding">
       <q-btn class="q-mr-sm" slot="right" flat round dense color="primary" icon="event" @click="$emit('sala', sala)" />
       <q-list v-if="sala.reservas.length" no-border>
@@ -85,6 +85,9 @@ export default {
   props: ['sala'],
   data () {
     return {
+      bordaVerde: 'border-top: 4px solid #39b54a; border-radius: 5px;',
+      bordaAmarela: 'border-top: 4px solid #fdc300; border-radius: 5px;',
+      bordaVermelha: 'border-top: 4px solid #ed1c24; border-radius: 5px;',
       inReserva: false,
       inPreReserva: false,
       dtInicial: '',
