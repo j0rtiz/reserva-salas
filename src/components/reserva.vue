@@ -5,24 +5,28 @@
       <span class="uppercase q-subheading text-weight-bold">{{id ? 'Editar' : 'Nova'}} reserva</span>
     </q-card-title>
     <q-card-main class="row bg-white">
-      <q-field class="col-12 q-px-sm q-pt-sm" :error="$v.formulario.dtInicial.$error">
-        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
-        <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
+      <q-field class="col-12 q-pa-sm" :error="$v.horaInicial.$error">
+        <q-datetime float-label="Hora inicial" type="time" minimal modal color="primary" format="HH:mm" format24h format-model="date" v-model="horaInicial" @blur="$v.horaInicial.$touch" />
+        <div slot="helper" v-if="!$v.horaInicial.required && $v.horaInicial.$error">Campo obrigatório.</div>
       </q-field>
-      <q-field class="col-12 q-pa-sm" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" :type="opcao ? 'datetime' : 'time'" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
-        <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
+      <q-field class="col-12 q-px-sm" :error="$v.horaFinal.$error">
+        <q-datetime :disable="horaInicial ? false : true" float-label="Hora final" type="time" minimal modal color="primary" format="HH:mm" format24h format-model="date" :min="dtFinal" v-model="horaFinal" @blur="$v.horaFinal.$touch" />
+        <div slot="helper" v-if="!$v.horaFinal.required && $v.horaFinal.$error">Campo obrigatório.</div>
       </q-field>
-      <q-field :class="formulario.dtFinal ? 'col-12 q-px-sm' : 'col-12 q-px-sm q-pt-md'">
+      <q-field class="col-12 q-pa-sm" :error="$v.data.$error">
+        <q-datetime :disable="horaFinal ? false : true" float-label="Data" type="date" minimal modal color="primary" format="DD/MM/YYYY" format24h format-model="date" :min="dtInicial" v-model="data" @blur="$v.data.$touch" />
+        <div slot="helper" v-if="!$v.data.required && $v.data.$error">Campo obrigatório.</div>
+      </q-field>
+      <q-field :class="horaFinal ? 'col-12 q-px-sm' : 'col-12 q-px-sm q-pt-md'">
         <q-checkbox v-model="opcao" color="primary" label="Repetir evento" left-label style="color: #979797;" />
       </q-field>
-      <q-field class="col-12 q-px-sm" :error="$v.formulario.nmEvento.$error">
+      <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
         <q-input float-label="Evento" color="primary" clearable v-model="formulario.nmEvento" upper-case @blur="$v.formulario.nmEvento.$touch" />
         <div slot="helper" v-if="!$v.formulario.nmEvento.required && $v.formulario.nmEvento.$error">Campo obrigatório.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
-      <q-field :class="formulario.nmEvento ? 'col-12 q-pa-sm' : 'col-12 q-pa-sm q-pt-lg'">
+      <q-field :class="formulario.nmEvento ? 'col-12 q-px-sm' : 'col-12 q-px-sm q-pt-lg'">
         <q-input float-label="Sala" color="primary" v-model="descSala" disable />
       </q-field>
     </q-card-main>
@@ -52,25 +56,30 @@ export default {
         usuarioId: this.$store.state.session.id
       },
       opcao: false,
+      horaInicial: '',
+      horaFinal: '',
       dtInicial: Date.now(),
       dtFinal: '',
-      dtFinalMax: '',
+      data: '',
       descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase()
     }
   },
   validations: {
     formulario: {
-      dtInicial: {
-        required
-      },
-      dtFinal: {
-        required
-      },
       nmEvento: {
         required,
         minLength: minLength(5),
         maxLength: maxLength(30)
       }
+    },
+    horaInicial: {
+      required
+    },
+    horaFinal: {
+      required
+    },
+    data: {
+      required
     }
   },
   watch: {
@@ -80,20 +89,16 @@ export default {
     },
     modal (modal) {
       if (!modal) {
-        this.formulario.dtInicial = ''
-        this.formulario.dtFinal = ''
+        this.formulario.horaInicial = ''
+        this.formulario.horaFinal = ''
         this.opcao = false
         this.formulario.nmEvento = ''
         this.formulario.salaId = ''
         this.$v.formulario.$reset()
       }
     },
-    'formulario.dtInicial': {
-      deep: true,
-      handler (dtInicial) {
-        this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
-        this.dtFinalMax = dtInicial ? `${date.formatDate(dtInicial, 'YYYY-MM-DD')} 23:59:59` : ''
-      }
+    horaInicial (horaInicial) {
+      this.dtFinal = date.addToDate(horaInicial, { hours: 1 })
     }
   },
   methods: {
