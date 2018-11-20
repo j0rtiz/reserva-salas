@@ -1,6 +1,6 @@
 <template>
   <q-page class="row q-pa-sm bg-blue-grey-2">
-    <q-modal v-if="sala" v-model="modal" content-classes="col-4 bg-primary">
+    <q-modal v-if="sala" v-model="modal" :content-classes="$q.screen.xs ? 'flex flex-center q-pa-md' : 'col-xl-4 col-lg-5 col-md-7 col-sm-8 bg-primary'" :minimized="!$q.screen.xs" :content-css="$q.screen.xs ? 'background-color: rgba(0, 0, 0, 0);' : ''">
       <reserva :sala="sala" :modal="modal" @modal="Modal" />
     </q-modal>
     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm" v-for="sala in Cards" :key="sala.id">

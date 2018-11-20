@@ -144,11 +144,7 @@ module.exports = function (ctx) {
       iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons',
       i18n: 'pt-br' // Quasar language
     },
-    // animations: 'all' --- includes all animations
-    animations: [
-      'fadeIn',
-      'fadeOut'
-    ],
+    animations: 'all', // --- includes all animations
     ssr: {
       pwa: false
     },
