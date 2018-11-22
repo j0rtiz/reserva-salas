@@ -1,7 +1,9 @@
 <template>
   <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm">
-    <q-card class="non-selectable" color="light" :style="inReserva ? bordaVermelha : inPreReserva ? bordaAmarela : bordaVerde">
+    <q-card :class="inReserva ? 'bordaVermelha non-selectable' : inPreReserva ? 'bordaAmarela non-selectable' : 'bordaVerde non-selectable'" color="light">
       <q-card-title class="bg-light uppercase no-padding">
+        <q-btn v-show="inPreReserva" slot="right" flat round dense color="primary" icon="event_available" @click="AprovarReserva(reservaId)" />
+        <q-btn v-show="inPreReserva || inReserva" slot="right" flat round dense color="primary" icon="event_busy" @click="RemoverReserva(reservaId)" />
         <q-btn class="q-mr-sm" slot="right" flat round dense color="primary" icon="event" @click="$emit('sala', sala)" />
         <q-list v-if="sala.reservas.length" no-border>
           <q-item dense>
@@ -87,9 +89,7 @@ export default {
   props: ['sala'],
   data () {
     return {
-      bordaVerde: 'border-top: 4px solid #39b54a; border-radius: 5px;',
-      bordaAmarela: 'border-top: 4px solid #fdc300; border-radius: 5px;',
-      bordaVermelha: 'border-top: 4px solid #ed1c24; border-radius: 5px;',
+      reservaId: '',
       inReserva: false,
       inPreReserva: false,
       dtInicial: '',
@@ -122,11 +122,41 @@ export default {
           this.inReserva = true
           this.dtInicial = reserva.dtInicial
           this.dtFinal = reserva.dtFinal
+          this.reservaId = reserva.id
         } else if (date.isBetweenDates(Date.now(), reserva.dtInicial, reserva.dtFinal, { inclusiveFrom: true, inclusiveTo: true }) && reserva.inPreReserva) {
           this.inPreReserva = true
           this.dtInicial = reserva.dtInicial
           this.dtFinal = reserva.dtFinal
+          this.reservaId = reserva.id
         }
+      })
+    },
+    AprovarReserva (id) {
+      this.$axios.patch(`/reservas/${id}`, {
+        dtReserva: Date.now(),
+        inReserva: true,
+        inPreReserva: false
+      }).then(Res => {
+        this.inReserva = true
+        this.inPreReserva = false
+        this.$q.notify({
+          type: 'positive',
+          timeout: 1000,
+          message: 'A reserva foi confirmada com sucesso!'
+        })
+        this.$emit('reserva')
+      })
+    },
+    RemoverReserva (id) {
+      this.$axios.delete(`/reservas/${id}`).then(Res => {
+        this.inReserva = false
+        this.inPreReserva = false
+        this.$q.notify({
+          type: 'positive',
+          timeout: 1000,
+          message: 'A reserva foi removida com sucesso!'
+        })
+        this.$emit('reserva')
       })
     }
   }

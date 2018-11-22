@@ -4,14 +4,9 @@
       <q-icon class="q-pr-sm" name="event" size="23px" />
       <span class="uppercase q-subheading text-weight-bold">Nova reserva</span>
     </q-card-title>
-    <q-card-main class="row bg-white">
-      <q-field class="col-6 q-pa-sm q-pt-md" :error="$v.formulario.dtInicial.$error">
-        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
-        <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
-      </q-field>
-      <q-field class="col-6 q-pa-sm q-pt-md" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
-        <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
+    <q-card-main class="row bg-light">
+      <q-field class="col-12 q-pa-sm q-pt-md">
+        <q-input float-label="Sala" color="primary" v-model="descSala" disable />
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
         <q-input float-label="Evento" color="primary" upper-case clearable v-model="formulario.nmEvento" @blur="$v.formulario.nmEvento.$touch" />
@@ -19,11 +14,23 @@
         <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
-      <q-field :class="formulario.nmEvento ? 'col-12 q-pa-sm' : 'col-12 q-pa-sm q-pt-lg'">
-        <q-input float-label="Sala" color="primary" v-model="descSala" disable />
+      <q-field class="col-6 q-pa-sm" :error="$v.formulario.dtInicial.$error">
+        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
+        <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
       </q-field>
+      <q-field class="col-6 q-pa-sm" :error="$v.formulario.dtFinal.$error">
+        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
+        <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
+      </q-field>
+
+      <q-field v-if="opcao" class="col-12 q-pa-sm" :error="$v.repete.$error">
+        <!-- <q-option-group v-model="repete" type="radio" inline color="primary" :options="listaOpcoes" style="color: #979797;" /> -->
+        <q-select float-label="Recorrência" radio color="primary" v-model="repete" :options="listaOpcoes" />
+        <div slot="helper" v-if="!$v.repete.required && $v.repete.$error">Campo obrigatório.</div>
+      </q-field>
+
     </q-card-main>
-    <q-card-actions class="bg-white q-pt-lg" align="center">
+    <q-card-actions class="bg-light q-pt-lg" align="center">
       <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar" />
     </q-card-actions>
   </q-card>
@@ -50,6 +57,22 @@ export default {
       dtInicial: Date.now(),
       dtFinal: '',
       descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
+      opcao: false,
+      listaOpcoes: [
+        {
+          label: 'MENSALMENTE',
+          value: 1
+        },
+        {
+          label: 'SEMANALMENTE',
+          value: 2
+        },
+        {
+          label: 'DIARIAMENTE',
+          value: 3
+        }
+      ],
+      repete: '',
       erroReserva: false
     }
   },
@@ -66,6 +89,9 @@ export default {
         minLength: minLength(5),
         maxLength: maxLength(30)
       }
+    },
+    repete: {
+      required
     }
   },
   watch: {
@@ -80,6 +106,7 @@ export default {
         this.formulario.dtFinal = ''
         this.formulario.nmEvento = ''
         this.formulario.salaId = ''
+        this.repete = ''
         this.$v.formulario.$reset()
       }
     },
@@ -89,6 +116,9 @@ export default {
         this.$v.formulario.dtFinal.$reset()
       }
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
+    },
+    'formulario.dtFinal' (dtFinal) {
+      date.formatDate(dtFinal, 'YYYY-MM-DD') > date.formatDate(this.dtInicial, 'YYYY-MM-DD') ? this.opcao = true : this.opcao = false
     }
   },
   methods: {

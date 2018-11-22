@@ -6,7 +6,7 @@
       </q-modal>
     </div>
     <div class="row">
-      <sala class="" v-for="sala in Cards" :key="sala.id" :sala="sala" @sala="Reservar" />
+      <sala class="" v-for="sala in Cards" :key="sala.id" :sala="sala" @sala="Reservar" @reserva="Salas" />
     </div>
   </q-page>
 </template>
@@ -38,13 +38,13 @@ export default {
     this.Salas()
   },
   methods: {
-    Modal () {
-      this.modal = false
-      this.Salas()
-    },
     Reservar (sala) {
       this.modal = !this.modal
       this.sala = sala
+    },
+    Modal () {
+      this.modal = false
+      this.Salas()
     },
     Salas () {
       let filter = JSON.parse(JSON.stringify(this.filter))
