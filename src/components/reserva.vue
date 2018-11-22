@@ -14,16 +14,16 @@
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
-        <q-input float-label="Evento" color="primary" clearable v-model="formulario.nmEvento" upper-case @blur="$v.formulario.nmEvento.$touch" />
+        <q-input float-label="Evento" color="primary" upper-case clearable v-model="formulario.nmEvento" @blur="$v.formulario.nmEvento.$touch" />
         <div slot="helper" v-if="!$v.formulario.nmEvento.required && $v.formulario.nmEvento.$error">Campo obrigatório.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
         <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
-      <q-field class="col-12 q-pa-sm">
+      <q-field :class="formulario.nmEvento ? 'col-12 q-pa-sm' : 'col-12 q-pa-sm q-pt-lg'">
         <q-input float-label="Sala" color="primary" v-model="descSala" disable />
       </q-field>
     </q-card-main>
-    <q-card-actions class="bg-white q-pt-lg" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
+    <q-card-actions class="bg-white q-pt-lg" align="center">
       <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
     </q-card-actions>
   </q-card>
@@ -55,16 +55,16 @@ export default {
   },
   validations: {
     formulario: {
-      nmEvento: {
-        required,
-        minLength: minLength(5),
-        maxLength: maxLength(30)
-      },
       dtInicial: {
         required
       },
       dtFinal: {
         required
+      },
+      nmEvento: {
+        required,
+        minLength: minLength(5),
+        maxLength: maxLength(30)
       }
     }
   },
@@ -79,7 +79,7 @@ export default {
         this.formulario.dtFinal = ''
         this.formulario.nmEvento = ''
         this.formulario.salaId = ''
-        this.$v.$reset()
+        this.$v.formulario.$reset()
       }
     },
     'formulario.dtInicial' (dtInicial) {
