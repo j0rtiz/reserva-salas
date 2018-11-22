@@ -50,7 +50,8 @@ export default {
       },
       dtInicial: Date.now(),
       dtFinal: '',
-      descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase()
+      descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
+      erroReserva: false
     }
   },
   validations: {
@@ -74,6 +75,7 @@ export default {
       this.descSala = `${sala.nrSala} - ${sala.tiposala.tpSala}`.toUpperCase()
     },
     modal (modal) {
+      this.dtInicial = Date.now()
       if (!modal) {
         this.formulario.dtInicial = ''
         this.formulario.dtFinal = ''
@@ -83,13 +85,58 @@ export default {
       }
     },
     'formulario.dtInicial' (dtInicial) {
+      if (dtInicial >= this.formulario.dtFinal) {
+        this.formulario.dtFinal = ''
+        this.$v.formulario.dtFinal.$reset()
+      }
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
     }
   },
   methods: {
+    VerificarData (dtInicial, dtFinal, salaId) {
+      this.$axios.get('/reservas/findOne', {
+        params: {
+          filter: {
+            where: {
+              and: [
+                {
+                  or: [
+                    {
+                      dtInicial: {
+                        between: [dtInicial, dtFinal]
+                      }
+                    },
+                    {
+                      dtFinal: {
+                        between: [dtInicial, dtFinal]
+                      }
+                    }
+                  ]
+                },
+                {
+                  salaId: salaId
+                }
+              ]
+            }
+          }
+        }
+      }).then(Res => {
+        if (Res.data) {
+          this.erroReserva = true
+          this.$q.notify({
+            type: 'negative',
+            timeout: 1000,
+            message: 'Data indisponível para esta sala!'
+          })
+        } else {
+          this.erroReserva = false
+        }
+      })
+    },
     Salvar (id) {
+      this.VerificarData(this.formulario.dtInicial, this.formulario.dtFinal, this.formulario.salaId)
       this.$v.formulario.$touch()
-      if (!this.$v.formulario.$error) {
+      if (!this.$v.formulario.$error && !this.erroReserva) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         let salvar = id ? this.$axios.patch(`/reservas/${id}`, formulario) : this.$axios.post('/reservas', formulario)
         salvar.then(Res => {
