@@ -2,7 +2,7 @@
   <q-card color="primary">
     <q-card-title class="bg-primary text-white q-py-sm">
       <q-icon class="q-pr-sm" name="event" size="23px" />
-      <span class="uppercase q-subheading text-weight-bold">{{id ? 'Editar' : 'Nova'}} reserva</span>
+      <span class="uppercase q-subheading text-weight-bold">Nova reserva</span>
     </q-card-title>
     <q-card-main class="row bg-white">
       <q-field class="col-6 q-pa-sm q-pt-md" :error="$v.formulario.dtInicial.$error">
@@ -10,7 +10,7 @@
         <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-6 q-pa-sm q-pt-md" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" />
+        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
       <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
@@ -24,7 +24,7 @@
       </q-field>
     </q-card-main>
     <q-card-actions class="bg-white q-pt-lg" align="center">
-      <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
+      <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar" />
     </q-card-actions>
   </q-card>
 </template>
@@ -37,7 +37,6 @@ export default {
   props: ['sala', 'modal'],
   data () {
     return {
-      id: Number(this.$route.params.id),
       formulario: {
         dtPreReserva: Date.now(),
         dtInicial: '',
@@ -94,52 +93,53 @@ export default {
   },
   methods: {
     VerificarData (dtInicial, dtFinal, salaId) {
-      this.$axios.get('/reservas/findOne', {
-        params: {
-          filter: {
-            where: {
-              and: [
-                {
-                  or: [
-                    {
-                      dtInicial: {
-                        between: [dtInicial, dtFinal]
+      if (!this.$v.formulario.$error) {
+        this.$axios.get('/reservas', {
+          params: {
+            filter: {
+              where: {
+                and: [
+                  {
+                    or: [
+                      {
+                        dtInicial: {
+                          between: [dtInicial, dtFinal]
+                        }
+                      },
+                      {
+                        dtFinal: {
+                          between: [dtInicial, dtFinal]
+                        }
                       }
-                    },
-                    {
-                      dtFinal: {
-                        between: [dtInicial, dtFinal]
-                      }
-                    }
-                  ]
-                },
-                {
-                  salaId: salaId
-                }
-              ]
+                    ]
+                  },
+                  {
+                    salaId: salaId
+                  }
+                ]
+              }
             }
           }
-        }
-      }).then(Res => {
-        if (Res.data) {
-          this.erroReserva = true
-          this.$q.notify({
-            type: 'negative',
-            timeout: 1000,
-            message: 'Data indisponível para esta sala!'
-          })
-        } else {
-          this.erroReserva = false
-        }
-      })
+        }).then(Res => {
+          if (Res.data.length) {
+            this.erroReserva = true
+            this.$q.notify({
+              type: 'negative',
+              timeout: 1000,
+              message: 'Data indisponível para esta sala!'
+            })
+          } else {
+            this.erroReserva = false
+          }
+        })
+      }
     },
-    Salvar (id) {
-      this.VerificarData(this.formulario.dtInicial, this.formulario.dtFinal, this.formulario.salaId)
+    Salvar () {
       this.$v.formulario.$touch()
+      this.VerificarData(this.formulario.dtInicial, this.formulario.dtFinal, this.formulario.salaId)
       if (!this.$v.formulario.$error && !this.erroReserva) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
-        let salvar = id ? this.$axios.patch(`/reservas/${id}`, formulario) : this.$axios.post('/reservas', formulario)
-        salvar.then(Res => {
+        this.$axios.post('/reservas', formulario).then(Res => {
           this.$q.notify({
             type: 'positive',
             timeout: 1000,
