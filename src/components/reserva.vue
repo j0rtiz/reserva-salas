@@ -23,11 +23,16 @@
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
 
-      <q-field v-if="opcao" class="col-12 q-pa-sm" :error="$v.repete.$error">
-        <!-- <q-option-group v-model="repete" type="radio" inline color="primary" :options="listaOpcoes" style="color: #979797;" /> -->
-        <q-select float-label="Recorrência" radio color="primary" v-model="repete" :options="listaOpcoes" />
-        <div slot="helper" v-if="!$v.repete.required && $v.repete.$error">Campo obrigatório.</div>
+      <q-field v-if="dias > 7" :class="!recorrencia || recorrencia === 0 ? 'col-12 q-pa-sm' : 'col-6 q-pa-sm'" :error="$v.recorrencia.$error">
+        <q-select float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" />
+        <div slot="helper" v-if="!$v.recorrencia.required && $v.recorrencia.$error">Campo obrigatório.</div>
       </q-field>
+      <q-field v-if="recorrencia && recorrencia !== 0" class="col-6 q-pa-sm" :error="$v.dia.$error">
+        <q-select float-label="Dia" radio color="primary" v-model="dia" :options="listaDias" />
+        <div slot="helper" v-if="!$v.dia.required && $v.dia.$error">Campo obrigatório.</div>
+      </q-field>
+
+      <strong class="text-red">Opção: {{dias}} - Repete: {{recorrencia}}</strong>
 
     </q-card-main>
     <q-card-actions class="bg-light q-pt-lg" align="center">
@@ -57,22 +62,49 @@ export default {
       dtInicial: Date.now(),
       dtFinal: '',
       descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
-      opcao: false,
-      listaOpcoes: [
+      recorrencia: '',
+      listaRecorrencias: [
         {
-          label: 'MENSALMENTE',
-          value: 1
+          label: 'DIARIAMENTE',
+          value: 0
         },
         {
           label: 'SEMANALMENTE',
+          value: 1
+        }
+      ],
+      dia: '',
+      dias: false,
+      listaDias: [
+        {
+          label: 'DOMINGO',
+          value: 0
+        },
+        {
+          label: 'SEGUNDA FEIRA',
+          value: 1
+        },
+        {
+          label: 'TERÇA FEIRA',
           value: 2
         },
         {
-          label: 'DIARIAMENTE',
+          label: 'QUARTA FEIRA',
           value: 3
+        },
+        {
+          label: 'QUINTA FEIRA',
+          value: 4
+        },
+        {
+          label: 'SEXTA FEIRA',
+          value: 5
+        },
+        {
+          label: 'SÁBADO',
+          value: 6
         }
       ],
-      repete: '',
       erroReserva: false
     }
   },
@@ -90,7 +122,10 @@ export default {
         maxLength: maxLength(30)
       }
     },
-    repete: {
+    recorrencia: {
+      required
+    },
+    dia: {
       required
     }
   },
@@ -106,7 +141,8 @@ export default {
         this.formulario.dtFinal = ''
         this.formulario.nmEvento = ''
         this.formulario.salaId = ''
-        this.repete = ''
+        this.recorrencia = ''
+        this.dia = ''
         this.$v.formulario.$reset()
       }
     },
@@ -118,7 +154,16 @@ export default {
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
     },
     'formulario.dtFinal' (dtFinal) {
-      date.formatDate(dtFinal, 'YYYY-MM-DD') > date.formatDate(this.dtInicial, 'YYYY-MM-DD') ? this.opcao = true : this.opcao = false
+      this.dias = date.getDateDiff(dtFinal, this.dtInicial)
+    },
+    dias (dias) {
+      // let recorrencia = { label: 'MENSALMENTE', value: 2 }
+
+      // this.listaRecorrencias.forEach((element, index) => {
+      //   if (dias > 28 && !this.listaRecorrencias[index].label.includes(recorrencia.label)) {
+      //     this.listaRecorrencias.push(recorrencia)
+      //   }
+      // })
     }
   },
   methods: {
