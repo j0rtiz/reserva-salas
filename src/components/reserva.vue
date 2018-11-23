@@ -123,7 +123,7 @@ export default {
     },
     'formulario.dtInicial' (dtInicial) {
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
-      if (dtInicial >= this.formulario.dtFinal) {
+      if (date.addToDate(dtInicial, { hours: 1 }) >= this.formulario.dtFinal) {
         this.formulario.dtFinal = ''
         this.$v.formulario.dtFinal.$reset()
       }
@@ -181,15 +181,15 @@ export default {
           }
         }).then(Res => {
           if (Res.data.length) {
-            this.erroReserva = true
             this.$q.notify({
               type: 'negative',
               timeout: 1000,
               message: 'Data indisponível para esta sala!'
             })
+            this.erroReserva = true
           } else this.erroReserva = false
         })
-      }
+      } else this.erroReserva = false
     },
     Salvar () {
       this.$v.formulario.$touch()
