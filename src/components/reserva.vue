@@ -22,18 +22,14 @@
         <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
-
-      <q-field v-if="dias > 7" :class="!recorrencia || recorrencia === 0 ? 'col-12 q-pa-sm' : 'col-6 q-pa-sm'" :error="$v.recorrencia.$error">
-        <q-select float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" />
+      <q-field v-if="duracao > 2" :class="!recorrencia || recorrencia === 0 ? 'col-12 q-pa-sm' : 'col-6 q-pa-sm'" :error="$v.recorrencia.$error">
+        <q-select float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" @blur="$v.recorrencia.$touch" />
         <div slot="helper" v-if="!$v.recorrencia.required && $v.recorrencia.$error">Campo obrigatório.</div>
       </q-field>
-      <q-field v-if="recorrencia && recorrencia !== 0" class="col-6 q-pa-sm" :error="$v.dia.$error">
-        <q-select float-label="Dia" radio color="primary" v-model="dia" :options="listaDias" />
-        <div slot="helper" v-if="!$v.dia.required && $v.dia.$error">Campo obrigatório.</div>
+      <q-field v-if="recorrencia === 1" class="col-6 q-pa-sm" :error="$v.dias.$error">
+        <q-select float-label="Dias" toggle multiple color="primary" v-model="dias" :options="listaDias" @blur="$v.dias.$touch" />
+        <div slot="helper" v-if="!$v.dias.required && $v.dias.$error">Campo obrigatório.</div>
       </q-field>
-
-      <strong class="text-red">Opção: {{dias}} - Repete: {{recorrencia}}</strong>
-
     </q-card-main>
     <q-card-actions class="bg-light q-pt-lg" align="center">
       <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar" />
@@ -43,7 +39,7 @@
 
 <script>
 import { date } from 'quasar'
-import { required, minLength, maxLength } from 'vuelidate/lib/validators'
+import { required, requiredIf, minLength, maxLength } from 'vuelidate/lib/validators'
 export default {
   name: 'Reserva',
   props: ['sala', 'modal'],
@@ -73,8 +69,8 @@ export default {
           value: 1
         }
       ],
-      dia: '',
-      dias: false,
+      dias: [],
+      duracao: 0,
       listaDias: [
         {
           label: 'DOMINGO',
@@ -123,10 +119,14 @@ export default {
       }
     },
     recorrencia: {
-      required
+      required: requiredIf(function () {
+        return this.duracao > 2
+      })
     },
-    dia: {
-      required
+    dias: {
+      required: requiredIf(function () {
+        return this.recorrencia === 1
+      })
     }
   },
   watch: {
@@ -142,8 +142,10 @@ export default {
         this.formulario.nmEvento = ''
         this.formulario.salaId = ''
         this.recorrencia = ''
-        this.dia = ''
+        this.dias = []
         this.$v.formulario.$reset()
+        this.$v.recorrencia.$reset()
+        this.$v.dias.$reset()
       }
     },
     'formulario.dtInicial' (dtInicial) {
@@ -154,16 +156,7 @@ export default {
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
     },
     'formulario.dtFinal' (dtFinal) {
-      this.dias = date.getDateDiff(dtFinal, this.dtInicial)
-    },
-    dias (dias) {
-      // let recorrencia = { label: 'MENSALMENTE', value: 2 }
-
-      // this.listaRecorrencias.forEach((element, index) => {
-      //   if (dias > 28 && !this.listaRecorrencias[index].label.includes(recorrencia.label)) {
-      //     this.listaRecorrencias.push(recorrencia)
-      //   }
-      // })
+      this.duracao = date.getDateDiff(dtFinal, this.dtInicial) + 1
     }
   },
   methods: {
@@ -211,8 +204,10 @@ export default {
     },
     Salvar () {
       this.$v.formulario.$touch()
+      this.$v.recorrencia.$touch()
+      this.$v.dias.$touch()
       this.VerificarData(this.formulario.dtInicial, this.formulario.dtFinal, this.formulario.salaId)
-      if (!this.$v.formulario.$error && !this.erroReserva) {
+      if (!this.$v.formulario.$error && !this.$v.recorrencia.$error && !this.$v.dias.$error && !this.erroReserva) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         this.$axios.post('/reservas', formulario).then(Res => {
           this.$q.notify({
