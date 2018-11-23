@@ -22,12 +22,12 @@
         <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
         <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
       </q-field>
-      <q-field v-if="duracao > 2" :class="!recorrencia || recorrencia === 0 ? 'col-12 q-pa-sm' : 'col-6 q-pa-sm'" :error="$v.recorrencia.$error">
-        <q-select float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" @blur="$v.recorrencia.$touch" />
+      <q-field class="col-6 q-pa-sm" :error="$v.recorrencia.$error">
+        <q-select :disable="duracao < 3" float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" @blur="$v.recorrencia.$touch" />
         <div slot="helper" v-if="!$v.recorrencia.required && $v.recorrencia.$error">Campo obrigatório.</div>
       </q-field>
-      <q-field v-if="recorrencia === 1" class="col-6 q-pa-sm" :error="$v.dias.$error">
-        <q-select float-label="Dias" toggle multiple color="primary" v-model="dias" :options="listaDias" @blur="$v.dias.$touch" />
+      <q-field class="col-6 q-pa-sm" :error="$v.dias.$error">
+        <q-select :disable="recorrencia !== 1" float-label="Dias" toggle multiple color="primary" v-model="dias" :options="listaDias" @blur="$v.dias.$touch" />
         <div slot="helper" v-if="!$v.dias.required && $v.dias.$error">Campo obrigatório.</div>
       </q-field>
     </q-card-main>
@@ -110,7 +110,9 @@ export default {
         required
       },
       dtFinal: {
-        required
+        required: requiredIf(function () {
+          return this.formulario.dtInicial
+        })
       },
       nmEvento: {
         required,
@@ -156,7 +158,14 @@ export default {
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
     },
     'formulario.dtFinal' (dtFinal) {
+      this.$v.recorrencia.$reset()
       this.duracao = date.getDateDiff(dtFinal, this.dtInicial) + 1
+    },
+    duracao (duracao) {
+      duracao < 3 ? this.recorrencia = 0 : this.recorrencia = ''
+    },
+    recorrencia (recorrencia) {
+      if (recorrencia) this.$v.dias.$reset()
     }
   },
   methods: {
@@ -196,9 +205,7 @@ export default {
               timeout: 1000,
               message: 'Data indisponível para esta sala!'
             })
-          } else {
-            this.erroReserva = false
-          }
+          } else this.erroReserva = false
         })
       }
     },
