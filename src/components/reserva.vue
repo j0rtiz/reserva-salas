@@ -71,36 +71,7 @@ export default {
       ],
       dias: [],
       duracao: 0,
-      listaDias: [
-        {
-          label: 'DOMINGO',
-          value: 0
-        },
-        {
-          label: 'SEGUNDA FEIRA',
-          value: 1
-        },
-        {
-          label: 'TERÇA FEIRA',
-          value: 2
-        },
-        {
-          label: 'QUARTA FEIRA',
-          value: 3
-        },
-        {
-          label: 'QUINTA FEIRA',
-          value: 4
-        },
-        {
-          label: 'SEXTA FEIRA',
-          value: 5
-        },
-        {
-          label: 'SÁBADO',
-          value: 6
-        }
-      ],
+      listaDias: [],
       erroReserva: false
     }
   },
@@ -151,18 +122,29 @@ export default {
       }
     },
     'formulario.dtInicial' (dtInicial) {
+      this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
       if (dtInicial >= this.formulario.dtFinal) {
         this.formulario.dtFinal = ''
         this.$v.formulario.dtFinal.$reset()
       }
-      this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
+      this.$v.recorrencia.$reset()
+      this.duracao = date.getDateDiff(this.formulario.dtFinal, dtInicial) + 1
     },
     'formulario.dtFinal' (dtFinal) {
       this.$v.recorrencia.$reset()
-      this.duracao = date.getDateDiff(dtFinal, this.dtInicial) + 1
+      this.duracao = date.getDateDiff(dtFinal, this.formulario.dtInicial) + 1
     },
     duracao (duracao) {
       duracao < 3 ? this.recorrencia = 0 : this.recorrencia = ''
+      let condicao = duracao < 7 ? duracao : 7
+      let dias = []
+      for (let i = 0; i < condicao; i++) {
+        dias.push({
+          label: date.formatDate(date.addToDate(this.formulario.dtInicial, { days: i }), 'dddd').toUpperCase(),
+          value: i
+        })
+      }
+      this.listaDias = dias
     },
     recorrencia (recorrencia) {
       if (recorrencia) this.$v.dias.$reset()
