@@ -322,7 +322,7 @@ export default {
           datas.push(data)
         }
       }
-      this.datas = datas
+      this.formulario.datas = datas
     },
     Salvar () {
       this.$v.formulario.$touch()
