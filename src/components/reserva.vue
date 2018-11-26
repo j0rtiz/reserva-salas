@@ -1,38 +1,143 @@
 <template>
   <q-card color="primary">
     <q-card-title class="bg-primary text-white q-py-sm">
-      <q-icon class="q-pr-sm" name="event" size="23px" />
+      <q-icon
+        class="q-pr-sm"
+        name="event"
+        size="23px"
+      />
       <span class="uppercase q-subheading text-weight-bold">Nova reserva</span>
     </q-card-title>
     <q-card-main class="row bg-light">
       <q-field class="col-12 q-pa-sm q-pt-md">
-        <q-input float-label="Sala" color="primary" v-model="descSala" disable />
+        <q-input
+          float-label="Sala"
+          color="primary"
+          v-model="descSala"
+          disable
+        />
       </q-field>
-      <q-field class="col-12 q-pa-sm" :error="$v.formulario.nmEvento.$error">
-        <q-input float-label="Evento" color="primary" upper-case clearable v-model="formulario.nmEvento" @blur="$v.formulario.nmEvento.$touch" />
-        <div slot="helper" v-if="!$v.formulario.nmEvento.required && $v.formulario.nmEvento.$error">Campo obrigatório.</div>
-        <div slot="helper" v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
-        <div slot="helper" v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error">O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
+      <q-field
+        class="col-12 q-pa-sm"
+        :error="$v.formulario.nmEvento.$error"
+      >
+        <q-input
+          float-label="Evento"
+          color="primary"
+          upper-case
+          clearable
+          v-model="formulario.nmEvento"
+          @blur="$v.formulario.nmEvento.$touch"
+        />
+        <div
+          slot="helper"
+          v-if="!$v.formulario.nmEvento.required && $v.formulario.nmEvento.$error"
+        >Campo obrigatório.</div>
+        <div
+          slot="helper"
+          v-if="!$v.formulario.nmEvento.minLength && $v.formulario.nmEvento.$error"
+        >O nome do evento não pode conter menos que {{$v.formulario.nmEvento.$params.minLength.min}} caracteres.</div>
+        <div
+          slot="helper"
+          v-if="!$v.formulario.nmEvento.maxLength && $v.formulario.nmEvento.$error"
+        >O nome do evento não pode conter mais que {{$v.formulario.nmEvento.$params.maxLength.max}} caracteres.</div>
       </q-field>
-      <q-field class="col-6 q-pa-sm" :error="$v.formulario.dtInicial.$error">
-        <q-datetime float-label="Data inicial" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtInicial" v-model="formulario.dtInicial" @blur="$v.formulario.dtInicial.$touch" />
-        <div slot="helper" v-if="!$v.formulario.dtInicial.required && $v.formulario.dtInicial.$error">Campo obrigatório.</div>
+      <q-field
+        class="col-6 q-pa-sm"
+        :error="$v.dataInicial.$error"
+      >
+        <q-datetime
+          float-label="Data inicial"
+          type="datetime"
+          minimal
+          modal
+          color="primary"
+          format="DD/MM/YYYY - HH:mm"
+          format24h
+          format-model="date"
+          :min="dtInicial"
+          v-model="dataInicial"
+          @blur="$v.dataInicial.$touch"
+        />
+        <div
+          slot="helper"
+          v-if="!$v.dataInicial.required && $v.dataInicial.$error"
+        >Campo obrigatório.</div>
       </q-field>
-      <q-field class="col-6 q-pa-sm" :error="$v.formulario.dtFinal.$error">
-        <q-datetime :disable="formulario.dtInicial ? false : true" float-label="Data final" type="datetime" minimal modal color="primary" format="DD/MM/YYYY - HH:mm" format24h format-model="date" :min="dtFinal" v-model="formulario.dtFinal" @blur="$v.formulario.dtFinal.$touch" @input="VerificarData(formulario.dtInicial, formulario.dtFinal, formulario.salaId)" />
-        <div slot="helper" v-if="!$v.formulario.dtFinal.required && $v.formulario.dtFinal.$error">Campo obrigatório.</div>
+      <q-field
+        class="col-6 q-pa-sm"
+        :error="$v.dataFinal.$error"
+      >
+        <q-datetime
+          :disable="dataInicial ? false : true"
+          float-label="Data final"
+          type="datetime"
+          minimal
+          modal
+          color="primary"
+          format="DD/MM/YYYY - HH:mm"
+          format24h
+          format-model="date"
+          :min="dtFinal"
+          v-model="dataFinal"
+          @blur="$v.dataFinal.$touch"
+          @input="VerificarData(dataInicial, dataFinal, formulario.salaId)"
+        />
+        <div
+          slot="helper"
+          v-if="!$v.dataFinal.required && $v.dataFinal.$error"
+        >Campo obrigatório.</div>
       </q-field>
-      <q-field class="col-6 q-pa-sm" :error="$v.recorrencia.$error">
-        <q-select :disable="duracao < 3" float-label="Recorrência" radio color="primary" v-model="recorrencia" :options="listaRecorrencias" @blur="$v.recorrencia.$touch" />
-        <div slot="helper" v-if="!$v.recorrencia.required && $v.recorrencia.$error">Campo obrigatório.</div>
+      <q-field
+        class="col-6 q-pa-sm"
+        :error="$v.recorrencia.$error"
+      >
+        <q-select
+          :disable="duracao < 3"
+          float-label="Recorrência"
+          radio
+          color="primary"
+          v-model="recorrencia"
+          :options="listaRecorrencias"
+          @blur="$v.recorrencia.$touch"
+        />
+        <div
+          slot="helper"
+          v-if="!$v.recorrencia.required && $v.recorrencia.$error"
+        >Campo obrigatório.</div>
       </q-field>
-      <q-field class="col-6 q-pa-sm" :error="$v.dias.$error">
-        <q-select :disable="recorrencia !== 1" float-label="Dias" toggle multiple color="primary" v-model="dias" :options="listaDias" @blur="$v.dias.$touch" />
-        <div slot="helper" v-if="!$v.dias.required && $v.dias.$error">Campo obrigatório.</div>
+      <q-field
+        class="col-6 q-pa-sm"
+        :error="$v.dias.$error"
+      >
+        <q-select
+          :disable="recorrencia !== 1"
+          float-label="Dias"
+          toggle
+          multiple
+          color="primary"
+          v-model="dias"
+          :options="listaDias"
+          @blur="$v.dias.$touch"
+        />
+        <div
+          slot="helper"
+          v-if="!$v.dias.required && $v.dias.$error"
+        >Campo obrigatório.</div>
       </q-field>
     </q-card-main>
-    <q-card-actions class="bg-light q-pt-lg" align="center">
-      <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar" />
+    <q-card-actions
+      class="bg-light q-pt-lg"
+      align="center"
+    >
+      <q-btn
+        class="full-width"
+        color="primary"
+        label="Salvar"
+        icon="save"
+        size="form"
+        @click="Salvar"
+      />
     </q-card-actions>
   </q-card>
 </template>
@@ -47,14 +152,15 @@ export default {
     return {
       formulario: {
         dtPreReserva: Date.now(),
-        dtInicial: '',
-        dtFinal: '',
+        datas: [],
         nmEvento: '',
         inReserva: false,
         inPreReserva: true,
         salaId: this.sala.id,
         usuarioId: this.$store.state.session.id
       },
+      dataInicial: '',
+      dataFinal: '',
       dtInicial: Date.now(),
       dtFinal: '',
       descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
@@ -69,27 +175,27 @@ export default {
           value: 1
         }
       ],
-      dias: [],
       duracao: 0,
+      dias: [],
       listaDias: [],
       erroReserva: false
     }
   },
   validations: {
     formulario: {
-      dtInicial: {
-        required
-      },
-      dtFinal: {
-        required: requiredIf(function () {
-          return this.formulario.dtInicial
-        })
-      },
       nmEvento: {
         required,
         minLength: minLength(5),
         maxLength: maxLength(30)
       }
+    },
+    dataInicial: {
+      required
+    },
+    dataFinal: {
+      required: requiredIf(function () {
+        return this.dataInicial
+      })
     },
     recorrencia: {
       required: requiredIf(function () {
@@ -110,47 +216,57 @@ export default {
     modal (modal) {
       this.dtInicial = Date.now()
       if (!modal) {
-        this.formulario.dtInicial = ''
-        this.formulario.dtFinal = ''
-        this.formulario.nmEvento = ''
-        this.formulario.salaId = ''
-        this.recorrencia = ''
-        this.dias = []
-        this.$v.formulario.$reset()
-        this.$v.recorrencia.$reset()
-        this.$v.dias.$reset()
+        this.Resetar()
       }
     },
-    'formulario.dtInicial' (dtInicial) {
+    dataInicial (dtInicial) {
       this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
-      if (date.addToDate(dtInicial, { hours: 1 }) >= this.formulario.dtFinal) {
-        this.formulario.dtFinal = ''
-        this.$v.formulario.dtFinal.$reset()
+      if (this.dtFinal >= this.dataFinal) {
+        this.dataFinal = ''
+        this.$v.dataFinal.$reset()
       }
+      this.duracao = date.getDateDiff(this.dataFinal, dtInicial) + 1
       this.$v.recorrencia.$reset()
-      this.duracao = date.getDateDiff(this.formulario.dtFinal, dtInicial) + 1
     },
-    'formulario.dtFinal' (dtFinal) {
+    dataFinal (dtFinal) {
+      this.duracao = date.getDateDiff(dtFinal, this.dataInicial) + 1
       this.$v.recorrencia.$reset()
-      this.duracao = date.getDateDiff(dtFinal, this.formulario.dtInicial) + 1
     },
     duracao (duracao) {
       duracao < 3 ? this.recorrencia = 0 : this.recorrencia = ''
+      this.Dias(duracao, this.dataInicial)
+    },
+    recorrencia (recorrencia) {
+      this.dias = []
+      this.$v.dias.$reset()
+    }
+  },
+  methods: {
+    Resetar () {
+      this.formulario.datas = []
+      this.formulario.nmEvento = ''
+      this.formulario.salaId = ''
+      this.dataInicial = ''
+      this.dataFinal = ''
+      this.recorrencia = ''
+      this.dias = []
+      this.$v.formulario.$reset()
+      this.$v.dataInicial.$reset()
+      this.$v.dataFinal.$reset()
+      this.$v.recorrencia.$reset()
+      this.$v.dias.$reset()
+    },
+    Dias (duracao, dataInicial) {
       let condicao = duracao < 7 ? duracao : 7
       let dias = []
       for (let i = 0; i < condicao; i++) {
         dias.push({
-          label: date.formatDate(date.addToDate(this.formulario.dtInicial, { days: i }), 'dddd').toUpperCase(),
-          value: i
+          label: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase(),
+          value: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase()
         })
       }
       this.listaDias = dias
     },
-    recorrencia (recorrencia) {
-      if (recorrencia) this.$v.dias.$reset()
-    }
-  },
-  methods: {
     VerificarData (dtInicial, dtFinal, salaId) {
       if (!this.$v.formulario.$error) {
         this.$axios.get('/reservas', {
@@ -191,15 +307,32 @@ export default {
         })
       } else this.erroReserva = false
     },
-    AdicionarData (formulario, recorrencia, dias) {
-
+    AdicionarData (dataInicial, dataFinal, recorrencia, dias) {
+      let datas = []
+      for (let i = 0; i <= date.getDateDiff(dataFinal, dataInicial); i++) {
+        let data = {
+          dtPreReserva: date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'),
+          dtReserva: null,
+          dtInicial: `${date.formatDate(date.addToDate(dataInicial, { days: i }), 'YYYY-MM-DD')} ${date.formatDate(dataInicial, 'HH:mm')}`,
+          dtFinal: `${date.formatDate(date.addToDate(dataInicial, { days: i }), 'YYYY-MM-DD')} ${date.formatDate(dataFinal, 'HH:mm')}`
+        }
+        if (recorrencia && dias.includes(date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase())) {
+          datas.push(data)
+        } else if (!recorrencia) {
+          datas.push(data)
+        }
+      }
+      this.datas = datas
     },
     Salvar () {
       this.$v.formulario.$touch()
+      this.$v.dataInicial.$touch()
+      this.$v.dataFinal.$touch()
       this.$v.recorrencia.$touch()
       this.$v.dias.$touch()
-      this.VerificarData(this.formulario.dtInicial, this.formulario.dtFinal, this.formulario.salaId)
-      if (!this.$v.formulario.$error && !this.$v.recorrencia.$error && !this.$v.dias.$error && !this.erroReserva) {
+      this.VerificarData(this.dataInicial, this.dataFinal, this.formulario.salaId)
+      if (!this.$v.formulario.$error && !this.$v.dataInicial.$error && !this.$v.dataFinal.$error && !this.$v.recorrencia.$error && !this.$v.dias.$error && !this.erroReserva) {
+        this.AdicionarData(this.dataInicial, this.dataFinal, this.recorrencia, this.dias)
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         this.$axios.post('/reservas', formulario).then(Res => {
           this.$q.notify({
