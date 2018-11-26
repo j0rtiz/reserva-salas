@@ -191,6 +191,9 @@ export default {
         })
       } else this.erroReserva = false
     },
+    AdicionarData (formulario, recorrencia, dias) {
+
+    },
     Salvar () {
       this.$v.formulario.$touch()
       this.$v.recorrencia.$touch()
