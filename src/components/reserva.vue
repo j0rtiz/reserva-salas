@@ -308,7 +308,7 @@ export default {
       } else this.erroReserva = false
     },
     AdicionarData (dataInicial, dataFinal, recorrencia, dias) {
-      let datas = []
+      this.formulario.datas = []
       for (let i = 0; i <= date.getDateDiff(dataFinal, dataInicial); i++) {
         let data = {
           dtPreReserva: date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'),
@@ -317,12 +317,11 @@ export default {
           dtFinal: `${date.formatDate(date.addToDate(dataInicial, { days: i }), 'YYYY-MM-DD')} ${date.formatDate(dataFinal, 'HH:mm')}`
         }
         if (recorrencia && dias.includes(date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase())) {
-          datas.push(data)
+          this.formulario.datas.push(data)
         } else if (!recorrencia) {
-          datas.push(data)
+          this.formulario.datas.push(data)
         }
       }
-      this.formulario.datas = datas
     },
     Salvar () {
       this.$v.formulario.$touch()
