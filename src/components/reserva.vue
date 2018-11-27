@@ -44,7 +44,7 @@
       </q-field>
       <q-field
         class="col-6 q-pa-sm"
-        :error="$v.dataInicial.$error"
+        :error="$v.dtInicial.$error"
       >
         <q-datetime
           float-label="Data inicial"
@@ -55,21 +55,21 @@
           format="DD/MM/YYYY - HH:mm"
           format24h
           format-model="date"
-          :min="dtInicial"
-          v-model="dataInicial"
-          @blur="$v.dataInicial.$touch"
+          :min="inicial"
+          v-model="dtInicial"
+          @blur="$v.dtInicial.$touch"
         />
         <div
           slot="helper"
-          v-if="!$v.dataInicial.required && $v.dataInicial.$error"
+          v-if="!$v.dtInicial.required && $v.dtInicial.$error"
         >Campo obrigatório.</div>
       </q-field>
       <q-field
         class="col-6 q-pa-sm"
-        :error="$v.dataFinal.$error"
+        :error="$v.dtFinal.$error"
       >
         <q-datetime
-          :disable="dataInicial ? false : true"
+          :disable="dtInicial ? false : true"
           float-label="Data final"
           type="datetime"
           minimal
@@ -78,14 +78,14 @@
           format="DD/MM/YYYY - HH:mm"
           format24h
           format-model="date"
-          :min="dtFinal"
-          v-model="dataFinal"
-          @blur="$v.dataFinal.$touch"
-          @input="VerificarData(dataInicial, dataFinal, formulario.salaId)"
+          :min="final"
+          v-model="dtFinal"
+          @blur="$v.dtFinal.$touch"
+          @input="VerificarData(dtInicial, dtFinal, formulario.salaId)"
         />
         <div
           slot="helper"
-          v-if="!$v.dataFinal.required && $v.dataFinal.$error"
+          v-if="!$v.dtFinal.required && $v.dtFinal.$error"
         >Campo obrigatório.</div>
       </q-field>
       <q-field
@@ -151,18 +151,20 @@ export default {
   data () {
     return {
       formulario: {
-        dtPreReserva: Date.now(),
+        dtPreReserva: date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'),
+        horaInicial: '',
+        horaFinal: '',
         datas: [],
         nmEvento: '',
-        inReserva: false,
         inPreReserva: true,
+        inReserva: false,
         salaId: this.sala.id,
         usuarioId: this.$store.state.session.id
       },
-      dataInicial: '',
-      dataFinal: '',
-      dtInicial: Date.now(),
+      dtInicial: '',
       dtFinal: '',
+      inicial: Date.now(),
+      final: '',
       descSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
       recorrencia: '',
       listaRecorrencias: [
@@ -189,12 +191,12 @@ export default {
         maxLength: maxLength(30)
       }
     },
-    dataInicial: {
+    dtInicial: {
       required
     },
-    dataFinal: {
+    dtFinal: {
       required: requiredIf(function () {
-        return this.dataInicial
+        return this.dtInicial
       })
     },
     recorrencia: {
@@ -214,29 +216,29 @@ export default {
       this.descSala = `${sala.nrSala} - ${sala.tiposala.tpSala}`.toUpperCase()
     },
     modal (modal) {
-      this.dtInicial = Date.now()
+      this.inicial = Date.now()
       if (!modal) {
         this.Resetar()
       }
     },
-    dataInicial (dtInicial) {
-      this.dtFinal = date.addToDate(dtInicial, { hours: 1 })
-      if (this.dtFinal >= this.dataFinal) {
-        this.dataFinal = ''
-        this.$v.dataFinal.$reset()
+    dtInicial (dtInicial) {
+      this.final = date.addToDate(dtInicial, { hours: 1 })
+      if (this.final >= this.dtFinal) {
+        this.dtFinal = ''
+        this.$v.dtFinal.$reset()
       }
-      this.duracao = date.getDateDiff(this.dataFinal, dtInicial) + 1
+      this.duracao = date.getDateDiff(this.dtFinal, dtInicial) + 1
       this.$v.recorrencia.$reset()
     },
-    dataFinal (dtFinal) {
-      this.duracao = date.getDateDiff(dtFinal, this.dataInicial) + 1
+    dtFinal (dtFinal) {
+      this.duracao = date.getDateDiff(dtFinal, this.dtInicial) + 1
       this.$v.recorrencia.$reset()
     },
     duracao (duracao) {
       duracao < 3 ? this.recorrencia = 0 : this.recorrencia = ''
-      this.Dias(duracao, this.dataInicial)
+      this.Dias(duracao, this.dtInicial)
     },
-    recorrencia (recorrencia) {
+    recorrencia () {
       this.dias = []
       this.$v.dias.$reset()
     }
@@ -246,23 +248,23 @@ export default {
       this.formulario.datas = []
       this.formulario.nmEvento = ''
       this.formulario.salaId = ''
-      this.dataInicial = ''
-      this.dataFinal = ''
+      this.dtInicial = ''
+      this.dtFinal = ''
       this.recorrencia = ''
       this.dias = []
       this.$v.formulario.$reset()
-      this.$v.dataInicial.$reset()
-      this.$v.dataFinal.$reset()
+      this.$v.dtInicial.$reset()
+      this.$v.dtFinal.$reset()
       this.$v.recorrencia.$reset()
       this.$v.dias.$reset()
     },
-    Dias (duracao, dataInicial) {
+    Dias (duracao, dtInicial) {
       let condicao = duracao < 7 ? duracao : 7
       let dias = []
       for (let i = 0; i < condicao; i++) {
         dias.push({
-          label: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase(),
-          value: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase()
+          label: date.formatDate(date.addToDate(dtInicial, { days: i }), 'dddd').toUpperCase(),
+          value: date.formatDate(date.addToDate(dtInicial, { days: i }), 'dddd').toUpperCase()
         })
       }
       this.listaDias = dias
@@ -307,31 +309,28 @@ export default {
         })
       } else this.erroReserva = false
     },
-    AdicionarData (dataInicial, dataFinal, recorrencia, dias) {
-      this.formulario.datas = []
-      for (let i = 0; i <= date.getDateDiff(dataFinal, dataInicial); i++) {
-        let data = {
-          dtPreReserva: date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'),
-          dtReserva: null,
-          dtInicial: `${date.formatDate(date.addToDate(dataInicial, { days: i }), 'YYYY-MM-DD')} ${date.formatDate(dataInicial, 'HH:mm')}`,
-          dtFinal: `${date.formatDate(date.addToDate(dataInicial, { days: i }), 'YYYY-MM-DD')} ${date.formatDate(dataFinal, 'HH:mm')}`
-        }
-        if (recorrencia && dias.includes(date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase())) {
-          this.formulario.datas.push(data)
+    AdicionarData (dtInicial, dtFinal, recorrencia, dias) {
+      let datas = []
+      this.formulario.horaInicial = date.formatDate(dtInicial, 'HH:mm')
+      this.formulario.horaFinal = date.formatDate(dtFinal, 'HH:mm')
+      for (let i = 0; i <= date.getDateDiff(dtFinal, dtInicial); i++) {
+        if (recorrencia && dias.includes(date.formatDate(date.addToDate(dtInicial, { days: i }), 'dddd').toUpperCase())) {
+          datas.push(date.formatDate(date.addToDate(dtInicial, { days: i }), 'YYYY-MM-DD'))
         } else if (!recorrencia) {
-          this.formulario.datas.push(data)
+          datas.push(date.formatDate(date.addToDate(dtInicial, { days: i }), 'YYYY-MM-DD'))
         }
       }
+      this.formulario.datas = datas
     },
     Salvar () {
       this.$v.formulario.$touch()
-      this.$v.dataInicial.$touch()
-      this.$v.dataFinal.$touch()
+      this.$v.dtInicial.$touch()
+      this.$v.dtFinal.$touch()
       this.$v.recorrencia.$touch()
       this.$v.dias.$touch()
-      this.VerificarData(this.dataInicial, this.dataFinal, this.formulario.salaId)
-      if (!this.$v.formulario.$error && !this.$v.dataInicial.$error && !this.$v.dataFinal.$error && !this.$v.recorrencia.$error && !this.$v.dias.$error && !this.erroReserva) {
-        this.AdicionarData(this.dataInicial, this.dataFinal, this.recorrencia, this.dias)
+      this.VerificarData(this.dtInicial, this.dtFinal, this.formulario.salaId)
+      if (!this.$v.formulario.$error && !this.$v.dtInicial.$error && !this.$v.dtFinal.$error && !this.$v.recorrencia.$error && !this.$v.dias.$error && !this.erroReserva) {
+        this.AdicionarData(this.dtInicial, this.dtFinal, this.recorrencia, this.dias)
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         this.$axios.post('/reservas', formulario).then(Res => {
           this.$q.notify({
