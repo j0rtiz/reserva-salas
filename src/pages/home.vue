@@ -1,12 +1,28 @@
 <template>
   <q-page class="bg-blue-grey-2 q-pa-sm">
     <div class="row">
-      <q-modal v-if="sala" content-classes="col-xl-4 col-lg-5 col-md-7 col-sm-8 col-xs-11 bg-primary" v-model="modal" minimized :content-css="{maxWidth: '91%', maxHeight: '91%'}">
-        <reserva :sala="sala" :modal="modal" @modal="Modal" />
+      <q-modal
+        v-if="sala"
+        content-classes="col-xl-4 col-lg-5 col-md-7 col-sm-8 col-xs-11 bg-primary"
+        v-model="modal"
+        minimized
+        :content-css="{maxWidth: '91%', maxHeight: '91%'}"
+      >
+        <reserva
+          :sala="sala"
+          :modal="modal"
+          @modal="Modal"
+        />
       </q-modal>
     </div>
     <div class="row">
-      <sala class="" v-for="sala in Cards" :key="sala.id" :sala="sala" @sala="Reservar" @reserva="Salas" />
+      <sala
+        v-for="sala in Cards"
+        :key="sala.id"
+        :sala="sala"
+        @sala="Reservar"
+        @reserva="Salas"
+      />
     </div>
   </q-page>
 </template>

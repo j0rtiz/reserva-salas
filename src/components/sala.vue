@@ -179,6 +179,9 @@ export default {
       return `${date.formatDate(dtFinal, 'DD/MM/YYYY')} - ${date.formatDate(dtFinal, 'HH:mm')}`
     }
   },
+  mounted () {
+    this.VerificarReserva(this.sala)
+  },
   watch: {
     sala: {
       deep: true,
@@ -186,9 +189,6 @@ export default {
         this.VerificarReserva(sala)
       }
     }
-  },
-  mounted () {
-    this.VerificarReserva(this.sala)
   },
   methods: {
     VerificarReserva (sala) {
