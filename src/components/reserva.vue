@@ -160,7 +160,7 @@ export default {
         dataFinal: '',
         recorrencia: []
       },
-      descricaoSala: `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase(),
+      descricaoSala: `${this.sala.nrSala} - ${this.sala.tpSala}`.toUpperCase(),
       inicial: Date.now(),
       final: '',
       duracao: 0,
@@ -212,7 +212,7 @@ export default {
     },
     modal (modal) {
       if (modal) {
-        this.descricaoSala = `${this.sala.nrSala} - ${this.sala.tiposala.tpSala}`.toUpperCase()
+        this.descricaoSala = `${this.sala.nrSala} - ${this.sala.tpSala}`.toUpperCase()
         this.inicial = Date.now()
       } else {
         this.Resetar()

@@ -64,12 +64,10 @@ export default {
     },
     Salas () {
       let filter = JSON.parse(JSON.stringify(this.filter))
-      filter.include = [{ relation: 'pavimento' }, { relation: 'tiposala' }, { relation: 'reservas' }]
-      filter.order = 'nrSala ASC'
       if (!filter.where.tiposalaId.inq.length || filter.where.tiposalaId.inq[0] === '') {
         delete filter.where
       }
-      this.$axios.get('/salas', {
+      this.$axios.get('/salas/listar', {
         params: {
           filter
         }

@@ -1,12 +1,12 @@
 <template>
   <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm">
     <q-card
-      :class="inReserva ? 'bordaVermelha non-selectable' : inPreReserva ? 'bordaAmarela non-selectable' : 'bordaVerde non-selectable'"
+      :class="sala.status === 2 ? 'bordaVermelha non-selectable' : sala.status === 1 ? 'bordaAmarela non-selectable' : 'bordaVerde non-selectable'"
       color="light"
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
-          v-show="inPreReserva"
+          v-show="sala.status === 1"
           slot="right"
           flat
           round
@@ -16,7 +16,7 @@
           @click="AprovarReserva(reservaId)"
         />
         <q-btn
-          v-show="inPreReserva || inReserva"
+          v-show="sala.status === 1 || sala.status === 2"
           slot="right"
           flat
           round
@@ -36,18 +36,18 @@
           @click="$emit('sala', sala)"
         />
         <q-list
-          v-if="sala.reservas.length"
+          v-if="sala.status === 1 || sala.status === 2"
           no-border
         >
           <q-item dense>
             <q-item-side>
               <q-item-tile avatar>
                 <img
-                  v-if="inReserva"
+                  v-if="sala.status === 2"
                   src="../statics/images/Red-ball-48.png"
                 >
                 <img
-                  v-else-if="inPreReserva"
+                  v-else-if="sala.status === 1"
                   src="../statics/images/Yellow-ball-48.png"
                 >
                 <img
@@ -59,11 +59,11 @@
             <q-item-main>
               <q-item-tile label>
                 <span
-                  v-if="inReserva"
+                  v-if="sala.status === 2"
                   class="text-primary q-subheading text-weight-bold"
                 >Reservada</span>
                 <span
-                  v-else-if="inPreReserva"
+                  v-else-if="sala.status === 1"
                   class="text-primary q-subheading text-weight-bold"
                 >Pré reservada</span>
                 <span
@@ -100,11 +100,11 @@
         </p>
         <p>
           <strong>Tipo:</strong>
-          {{sala.tiposala.tpSala}}
+          {{sala.tpSala}}
         </p>
         <p>
           <strong>Andar:</strong>
-          {{sala.pavimento.nmPav}}
+          {{sala.nmPav}}
         </p>
         <p>
           <strong>Capacidade:</strong>
@@ -133,24 +133,20 @@
         />
       </q-card-main>
       <div
-        v-if="inReserva || inPreReserva"
+        v-if="sala.status === 1 || sala.status === 2"
         class="row bg-secondary"
       >
         <q-card-title
-          class="col-6 bg-primary text-white text-center uppercase no-padding"
+          class="col-6 bg-primary text-white text-center no-padding"
           style="border-radius: 0 0 0 5px"
         >
-          <span class="q-body-1 text-weight-bold">
-            {{dtInicial | FormataDataInicial}}<span class="lowercase">h</span>
-          </span>
+          <span class="q-body-1 text-weight-bold">{{dataInicial | FormatarData}}</span>
         </q-card-title>
         <q-card-title
-          class="col-6 bg-secondary text-white text-center uppercase no-padding"
+          class="col-6 bg-secondary text-white text-center no-padding"
           style="border-radius: 0 0 5px 0"
         >
-          <span class="q-body-1 text-weight-bold">
-            {{dtFinal | FormataDataFinal}}<span class="lowercase">h</span>
-          </span>
+          <span class="q-body-1 text-weight-bold">{{dataFinal | FormatarData}}</span>
         </q-card-title>
       </div>
     </q-card>
@@ -165,18 +161,15 @@ export default {
   data () {
     return {
       reservaId: '',
-      inReserva: false,
-      inPreReserva: false,
-      dtInicial: '',
-      dtFinal: ''
+      dataInicial: '',
+      dataFinal: ''
     }
   },
   filters: {
-    FormataDataInicial (dtInicial) {
-      return `${date.formatDate(dtInicial, 'DD/MM/YYYY')} - ${date.formatDate(dtInicial, 'HH:mm')}`
-    },
-    FormataDataFinal (dtFinal) {
-      return `${date.formatDate(dtFinal, 'DD/MM/YYYY')} - ${date.formatDate(dtFinal, 'HH:mm')}`
+    FormatarData (data) {
+      if (date.isValid(data)) {
+        return `${date.formatDate(data, 'DD/MM/YYYY')} - ${date.formatDate(data, 'HH:mm')}h`
+      }
     }
   },
   mounted () {
@@ -192,34 +185,20 @@ export default {
   },
   methods: {
     VerificarReserva (sala) {
-      let dtInicial = []
-      let dtFinal = []
-      sala.reservas.forEach(reserva => {
-        reserva.datas.forEach(data => {
-          dtInicial.push(new Date(data.dtInicial))
-          dtFinal.push(new Date(data.dtFinal))
+      if (sala.dataEvento) {
+        sala.dataEvento.map(evento => {
+          if (date.isBetweenDates(Date.now(), evento.dataInicial, evento.dataFinal, { inclusiveFrom: true, inclusiveTo: true })) {
+            this.reservaId = sala.reservaId
+            this.dataInicial = evento.dataInicial
+            this.dataFinal = evento.dataFinal
+          }
         })
-        if (date.isBetweenDates(date.formatDate(Date.now(), 'YYYY-MM-DD'), date.formatDate(date.getMinDate(...dtInicial), 'YYYY-MM-DD'), date.formatDate(date.getMinDate(...dtFinal), 'YYYY-MM-DD'), { inclusiveFrom: true, inclusiveTo: true }) && reserva.inReserva) {
-          this.inReserva = true
-          this.dtInicial = date.formatDate(date.getMinDate(...dtInicial), 'YYYY-MM-DD')
-          this.dtFinal = date.formatDate(date.getMinDate(...dtFinal), 'YYYY-MM-DD')
-          this.reservaId = reserva.id
-        } else if (date.isBetweenDates(date.formatDate(Date.now(), 'YYYY-MM-DD'), date.formatDate(date.getMinDate(...dtInicial), 'YYYY-MM-DD'), date.formatDate(date.getMinDate(...dtFinal), 'YYYY-MM-DD'), { inclusiveFrom: true, inclusiveTo: true }) && reserva.inPreReserva) {
-          this.inPreReserva = true
-          this.dtInicial = date.formatDate(date.getMinDate(...dtInicial), 'YYYY-MM-DD')
-          this.dtFinal = date.formatDate(date.getMinDate(...dtFinal), 'YYYY-MM-DD')
-          this.reservaId = reserva.id
-        }
-      })
+      }
     },
-    AprovarReserva (id) {
-      this.$axios.patch(`/reservas/${id}`, {
-        dtReserva: Date.now(),
-        inReserva: true,
-        inPreReserva: false
+    AprovarReserva (reservaId) {
+      this.$axios.patch(`/reservas/${reservaId}`, {
+        dataReserva: Date.now()
       }).then(Res => {
-        this.inReserva = true
-        this.inPreReserva = false
         this.$q.notify({
           type: 'positive',
           timeout: 1000,
@@ -228,10 +207,8 @@ export default {
         this.$emit('reserva')
       })
     },
-    RemoverReserva (id) {
-      this.$axios.delete(`/reservas/${id}`).then(Res => {
-        this.inReserva = false
-        this.inPreReserva = false
+    RemoverReserva (reservaId) {
+      this.$axios.delete(`/reservas/${reservaId}`).then(Res => {
         this.$q.notify({
           type: 'positive',
           timeout: 1000,
