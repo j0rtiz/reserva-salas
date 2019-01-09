@@ -247,7 +247,7 @@ export default {
       for (let i = 0; i < condicao; i++) {
         dias.push({
           label: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase(),
-          value: date.formatDate(date.addToDate(dataInicial, { days: i }), 'dddd').toUpperCase()
+          value: Number(date.formatDate(date.addToDate(dataInicial, { days: i }), 'd'))
         })
       }
       this.listaDias = dias
