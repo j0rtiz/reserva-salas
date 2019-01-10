@@ -82,7 +82,7 @@
             :min="final"
             v-model="formulario.dataFinal"
             @blur="$v.formulario.dataFinal.$touch"
-            @input="VerificarData(formulario.dataInicial, formulario.dataFinal, formulario.salaId)"
+            @input="VerificarData(formulario.salaId, formulario.dataInicial, formulario.dataFinal)"
           />
           <div
             slot="helper"
@@ -260,51 +260,25 @@ export default {
       this.recorrencia = ''
       this.$v.$reset()
     },
-    VerificarData (dataInicial, dataFinal, salaId) {
+    VerificarData (salaId, dataInicial, dataFinal) {
       if (!this.$v.formulario.$error) {
-        this.$axios.get('/reservas', {
+        this.$axios.get('/reservas/verificar', {
           params: {
-            filter: {
-              fields: ['horaInicial', 'horaFinal', 'dataEvento'],
-              where: {
-                salaId: salaId
-              }
-            }
+            salaId,
+            dataInicial,
+            dataFinal
           }
         }).then(Res => {
-          if (date.formatDate(dataFinal, 'HH:mm') <= date.formatDate(dataInicial, 'HH:mm')) {
-            this.$q.notify({
-              type: 'negative',
-              message: 'O horário final do evento deve ser maior que o horário inicial!'
-            })
-            this.erroReserva = true
-          } else {
-            this.erroReserva = false
-          }
-          Res.data.map(reserva => {
-            reserva.dataEvento.map(data => {
-              let inicial = date.formatDate(new Date(`${data} ${reserva.horaInicial}`), 'YYYY-MM-DD HH:mm')
-              let final = date.formatDate(new Date(`${data} ${reserva.horaFinal}`), 'YYYY-MM-DD HH:mm')
-              if (date.isBetweenDates(dataInicial, inicial, final, { inclusiveFrom: true, inclusiveTo: true }) || date.isBetweenDates(dataFinal, inicial, final, { inclusiveFrom: true, inclusiveTo: true })) {
-                this.$q.notify({
-                  type: 'negative',
-                  message: 'Data indisponível para esta sala!'
-                })
-                this.erroReserva = true
-              } else {
-                this.erroReserva = false
-              }
-            })
-          })
+          this.erroReserva = Res.data.erroReserva
+          if (Res.data.erroHora) this.$q.notify(Res.data.erroHora)
+          if (Res.data.erroData) this.$q.notify(Res.data.erroData)
         })
-      } else {
-        this.erroReserva = false
       }
     },
     Salvar () {
       this.$v.formulario.$touch()
       this.$v.recorrencia.$touch()
-      this.VerificarData(this.formulario.dataInicial, this.formulario.dataFinal, this.formulario.salaId)
+      this.VerificarData(this.formulario.salaId, this.formulario.dataInicial, this.formulario.dataFinal)
       if (!this.$v.formulario.$error && !this.$v.recorrencia.$error && !this.erroReserva) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         this.$axios.post('/reservas/salvar', formulario).then(Res => {
