@@ -13,7 +13,6 @@
             <!-- {{subtitulo}} -->
           </span>
         </q-toolbar-title>
-        <relogio :displaySeconds="true" />
         <perfilmini />
       </q-toolbar>
     </q-layout-header>
@@ -81,10 +80,9 @@
 
 <script>
 import perfilmini from '../components/perfilmini'
-import relogio from 'vue-digital-clock'
 export default {
   name: 'LayoutHome',
-  components: { perfilmini, relogio },
+  components: { perfilmini },
   data () {
     return {
       desktop: this.$q.platform.is.desktop,
