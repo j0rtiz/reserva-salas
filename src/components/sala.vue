@@ -39,19 +39,28 @@
           v-if="sala.status === 1 || sala.status === 2"
           no-border
         >
-          <q-item dense>
+          <q-item
+            class="q-px-none"
+            dense
+          >
             <q-item-side>
-              <q-item-tile avatar>
+              <q-item-tile
+                class="flex flex-center q-pl-md"
+                icon
+              >
                 <img
                   v-if="sala.status === 2"
+                  class="avatar-size"
                   src="../statics/images/Red-ball-48.png"
                 >
                 <img
                   v-else-if="sala.status === 1"
+                  class="avatar-size"
                   src="../statics/images/Yellow-ball-48.png"
                 >
                 <img
                   v-else
+                  class="avatar-size"
                   src="../statics/images/Green-ball-48.png"
                 >
               </q-item-tile>
@@ -78,10 +87,19 @@
           v-else
           no-border
         >
-          <q-item dense>
+          <q-item
+            class="q-px-none"
+            dense
+          >
             <q-item-side>
-              <q-item-tile avatar>
-                <img src="../statics/images/Green-ball-48.png">
+              <q-item-tile
+                class="flex flex-center q-pl-md"
+                icon
+              >
+                <img
+                  class="avatar-size"
+                  src="../statics/images/Green-ball-48.png"
+                >
               </q-item-tile>
             </q-item-side>
             <q-item-main>
@@ -123,7 +141,10 @@
               v-for="nmEquip in sala.nmEquip"
               :key="nmEquip.id"
             >
-              <q-item-main :label="`&#10004; ${nmEquip}`" />
+              <q-item-main
+                class="q-body-1"
+                :label="`&#10004; ${nmEquip}`"
+              />
             </q-item>
           </q-list>
         </p>

@@ -127,7 +127,8 @@ module.exports = function (ctx) {
         'QChipsInput',
         'QTooltip',
         'QOptionGroup',
-        'QChip'
+        'QChip',
+        'QResizeObservable'
       ],
       directives: [
         'Ripple',
