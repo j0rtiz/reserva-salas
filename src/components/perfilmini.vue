@@ -2,7 +2,6 @@
   <div :class="menu ? 'zoom' : 'zoom-hover'">
     <q-btn
       :class="menu ? 'zoom-color' : 'no-shadow perfilmini'"
-      ref="teste"
       flat
       round
       dense
@@ -14,14 +13,13 @@
         minimized
         no-esc-dismiss
         no-backdrop-dismiss
-        @show="() => $refs.teste.close()"
       >
         <q-card
           class="non-selectable"
           flat
         >
           <q-card-main class="text-center">
-            <div class="q-display-1 text-weight-medium">{{$NodePackage.productName}}</div>
+            <div class="q-display-1 text-weight-bold text-dark">{{$NodePackage.productName}}</div>
             <q-chip
               class="text-weight-medium q-mb-lg"
               color="red-4"
@@ -62,6 +60,7 @@
         <strong class="q-title text-weight-bold">{{$store.state.session.username.substring(0,1).toUpperCase()}}</strong>
       </q-btn>
       <q-popover
+        ref="popover"
         self="bottom right"
         anchor="top right"
         :offset="[0, 3]"
@@ -113,7 +112,7 @@
             class="q-body-1"
             dense
             link
-            @click.native="modal = true"
+            @click.native="Toggle"
           >
             <q-item-main label="Sobre" />
             <q-item-side
@@ -146,6 +145,12 @@ export default {
     return {
       modal: false,
       menu: false
+    }
+  },
+  methods: {
+    Toggle () {
+      this.modal = true
+      this.$refs.popover.hide()
     }
   }
 }
