@@ -6,14 +6,20 @@
         text-color="white"
         class="row"
       >
-        <!-- <q-btn flat round dense icon="menu" @click="leftDrawer = !leftDrawer" /> -->
-        <q-toolbar-title>
-          <!-- {{titulo}} -->
+        <!-- <q-btn
+          flat
+          round
+          dense
+          icon="menu"
+          @click="leftDrawer = !leftDrawer"
+        /> -->
+        <q-toolbar-title class="q-pl-xs">
+          {{titulo}}
           <span slot="subtitle">
-            <!-- {{subtitulo}} -->
+            {{subtitulo}}
           </span>
         </q-toolbar-title>
-        <perfilmini />
+        <perfilmini class="q-pr-xs" />
       </q-toolbar>
     </q-layout-header>
     <q-layout-drawer
