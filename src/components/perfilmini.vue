@@ -1,17 +1,20 @@
 <template>
-  <div class="zoom">
+  <div :class="menu ? 'zoom' : 'zoom-hover'">
     <q-btn
-      class="no-shadow perfilmini"
+      :class="menu ? 'zoom-color' : 'no-shadow perfilmini'"
+      ref="teste"
       flat
       round
       dense
       no-ripple
+      @click="menu = true"
     >
       <q-modal
         v-model="modal"
         minimized
         no-esc-dismiss
         no-backdrop-dismiss
+        @show="() => $refs.teste.close()"
       >
         <q-card
           class="non-selectable"
@@ -62,6 +65,7 @@
         self="bottom right"
         anchor="top right"
         :offset="[0, 3]"
+        @hide="menu = false"
       >
         <q-list
           class="text-primary"
@@ -140,7 +144,8 @@
 export default {
   data () {
     return {
-      modal: false
+      modal: false,
+      menu: false
     }
   }
 }
