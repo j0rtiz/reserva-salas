@@ -1,19 +1,79 @@
 <template>
   <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm">
+    <q-modal
+      v-if="sala.eventos"
+      content-classes="q-pa-xs"
+      v-model="modal"
+      minimized
+      :content-css="{maxWidth: '91%', maxHeight: '91%'}"
+    >
+      <div
+        v-for="(evento, index) in sala.eventos"
+        :key="index"
+      >
+        <q-list
+          class="q-pa-xs cursor-pointer"
+          no-border
+          @click.native="Teste(evento)"
+        >
+          <dt class="q-caption text-weight-bold text-primary uppercase">Evento</dt>
+          <dd class="q-py-xs">
+            <q-card
+              color="blue-grey-2"
+              text-color="primary"
+            >
+              <blockquote
+                style="border-radius: 3px 0 0 3px;"
+                class="q-body-1"
+              >{{evento.nomeEvento}}</blockquote>
+            </q-card>
+          </dd>
+          <dt class="q-caption text-weight-bold text-primary uppercase q-pt-sm">Data</dt>
+          <dd
+            class="q-py-xs"
+            v-for="(data, index) in evento.dataEvento"
+            :key="index"
+          >
+            <q-card
+              color="blue-grey-2"
+              text-color="primary"
+            >
+              <blockquote
+                style="border-radius: 3px 0 0 3px;"
+                class="q-body-1"
+              >
+                <q-icon
+                  name="event"
+                  color="primary"
+                  size="20px"
+                />
+                {{data.dataInicial | FormatarData}}
+                <q-icon
+                  name="remove"
+                  color="primary"
+                  size="12px"
+                />
+                {{data.dataFinal | FormatarData}}
+              </blockquote>
+            </q-card>
+          </dd>
+        </q-list>
+      </div>
+    </q-modal>
     <q-card
       :class="sala.status === 2 ? 'bordaVermelha non-selectable' : sala.status === 1 ? 'bordaAmarela non-selectable' : 'bordaVerde non-selectable'"
       color="light"
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
-          v-show="sala.status === 1 || sala.status === 2"
+          v-show="sala.eventos"
           slot="right"
           flat
           round
           dense
           color="red"
           icon="notification_important"
-          @click="teste = true"
+          @click="modal = true"
         />
         <!-- <q-btn
           v-show="sala.status === 1"
@@ -191,6 +251,7 @@ export default {
   props: ['sala'],
   data () {
     return {
+      modal: false,
       reservaId: '',
       dataInicial: '',
       dataFinal: ''
@@ -246,6 +307,31 @@ export default {
           message: 'A reserva foi removida com sucesso!'
         })
         this.$emit('reserva')
+      })
+    },
+    Teste (evento) {
+      this.modal = false
+      this.$q.actionSheet({
+        title: evento.nomeEvento,
+        grid: true,
+        actions: [
+          {
+            label: 'Aprovar',
+            color: 'positive',
+            icon: 'event_available',
+            handler: () => {
+              this.AprovarReserva(evento.reservaId)
+            }
+          },
+          {
+            label: 'Remover',
+            color: 'negative',
+            icon: 'event_busy',
+            handler: () => {
+              this.RemoverReserva(evento.reservaId)
+            }
+          }
+        ]
       })
     }
   }
