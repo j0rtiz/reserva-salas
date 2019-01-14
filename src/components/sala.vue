@@ -6,6 +6,16 @@
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
+          v-show="sala.status === 1 || sala.status === 2"
+          slot="right"
+          flat
+          round
+          dense
+          color="red"
+          icon="notification_important"
+          @click="teste = true"
+        />
+        <!-- <q-btn
           v-show="sala.status === 1"
           slot="right"
           flat
@@ -14,8 +24,8 @@
           color="primary"
           icon="event_available"
           @click="AprovarReserva(reservaId)"
-        />
-        <q-btn
+        /> -->
+        <!-- <q-btn
           v-show="sala.status === 1 || sala.status === 2"
           slot="right"
           flat
@@ -24,7 +34,7 @@
           color="primary"
           icon="event_busy"
           @click="RemoverReserva(reservaId)"
-        />
+        /> -->
         <q-btn
           class="q-mr-sm"
           slot="right"
@@ -206,10 +216,10 @@ export default {
   },
   methods: {
     VerificarReserva (sala) {
-      if (sala.dataEvento) {
-        sala.dataEvento.map(evento => {
+      if (sala.eventos && sala.eventos.length) {
+        sala.eventos.map(evento => {
           if (date.isBetweenDates(Date.now(), evento.dataInicial, evento.dataFinal, { inclusiveFrom: true, inclusiveTo: true })) {
-            this.reservaId = sala.reservaId
+            this.reservaId = evento.reservaId
             this.dataInicial = evento.dataInicial
             this.dataFinal = evento.dataFinal
           }

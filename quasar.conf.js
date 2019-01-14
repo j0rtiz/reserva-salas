@@ -140,7 +140,8 @@ module.exports = function (ctx) {
         'Loading',
         'LocalStorage',
         'Dialog',
-        'Screen'
+        'Screen',
+        'ActionSheet'
       ],
       iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons',
       i18n: 'pt-br' // Quasar language
