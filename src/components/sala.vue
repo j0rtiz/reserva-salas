@@ -7,58 +7,11 @@
       minimized
       :content-css="{maxWidth: '91%', maxHeight: '91%'}"
     >
-      <div
-        v-for="(evento, index) in sala.eventos"
-        :key="index"
-      >
-        <q-list
-          class="q-pa-xs cursor-pointer"
-          no-border
-          @click.native="Teste(evento)"
-        >
-          <dt class="q-caption text-weight-bold text-primary uppercase">Evento</dt>
-          <dd class="q-py-xs">
-            <q-card
-              color="blue-grey-2"
-              text-color="primary"
-            >
-              <blockquote
-                style="border-radius: 3px 0 0 3px;"
-                class="q-body-1"
-              >{{evento.nomeEvento}}</blockquote>
-            </q-card>
-          </dd>
-          <dt class="q-caption text-weight-bold text-primary uppercase q-pt-sm">Data</dt>
-          <dd
-            class="q-py-xs"
-            v-for="(data, index) in evento.dataEvento"
-            :key="index"
-          >
-            <q-card
-              color="blue-grey-2"
-              text-color="primary"
-            >
-              <blockquote
-                style="border-radius: 3px 0 0 3px;"
-                class="q-body-1"
-              >
-                <q-icon
-                  name="event"
-                  color="primary"
-                  size="20px"
-                />
-                {{data.dataInicial | FormatarData}}
-                <q-icon
-                  name="remove"
-                  color="primary"
-                  size="12px"
-                />
-                {{data.dataFinal | FormatarData}}
-              </blockquote>
-            </q-card>
-          </dd>
-        </q-list>
-      </div>
+      <evento
+        :eventos="sala.eventos"
+        @modal="() => modal = false"
+        @reserva="() => $emit('reserva')"
+      />
     </q-modal>
     <q-card
       :class="sala.status === 2 ? 'bordaVermelha non-selectable' : sala.status === 1 ? 'bordaAmarela non-selectable' : 'bordaVerde non-selectable'"
@@ -75,26 +28,6 @@
           icon="notification_important"
           @click="modal = true"
         />
-        <!-- <q-btn
-          v-show="sala.status === 1"
-          slot="right"
-          flat
-          round
-          dense
-          color="primary"
-          icon="event_available"
-          @click="AprovarReserva(reservaId)"
-        /> -->
-        <!-- <q-btn
-          v-show="sala.status === 1 || sala.status === 2"
-          slot="right"
-          flat
-          round
-          dense
-          color="primary"
-          icon="event_busy"
-          @click="RemoverReserva(reservaId)"
-        /> -->
         <q-btn
           class="q-mr-sm"
           slot="right"
@@ -246,8 +179,10 @@
 
 <script>
 import { date } from 'quasar'
+import evento from 'components/evento'
 export default {
   name: 'Sala',
+  components: { evento },
   props: ['sala'],
   data () {
     return {
@@ -286,53 +221,6 @@ export default {
           }
         })
       }
-    },
-    AprovarReserva (reservaId) {
-      this.$axios.patch(`/reservas/${reservaId}`, {
-        dataReserva: Date.now()
-      }).then(Res => {
-        this.$q.notify({
-          type: 'positive',
-          timeout: 1000,
-          message: 'A reserva foi confirmada com sucesso!'
-        })
-        this.$emit('reserva')
-      })
-    },
-    RemoverReserva (reservaId) {
-      this.$axios.delete(`/reservas/${reservaId}`).then(Res => {
-        this.$q.notify({
-          type: 'positive',
-          timeout: 1000,
-          message: 'A reserva foi removida com sucesso!'
-        })
-        this.$emit('reserva')
-      })
-    },
-    Teste (evento) {
-      this.modal = false
-      this.$q.actionSheet({
-        title: evento.nomeEvento,
-        grid: true,
-        actions: [
-          {
-            label: 'Aprovar',
-            color: 'positive',
-            icon: 'event_available',
-            handler: () => {
-              this.AprovarReserva(evento.reservaId)
-            }
-          },
-          {
-            label: 'Remover',
-            color: 'negative',
-            icon: 'event_busy',
-            handler: () => {
-              this.RemoverReserva(evento.reservaId)
-            }
-          }
-        ]
-      })
     }
   }
 }
