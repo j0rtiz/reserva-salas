@@ -3,6 +3,7 @@
     <q-list
       class="no-padding"
       no-border
+      separator
       link
     >
       <q-item
