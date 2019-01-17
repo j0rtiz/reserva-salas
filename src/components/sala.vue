@@ -2,7 +2,6 @@
   <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 q-pa-sm">
     <q-modal
       v-if="sala.eventos"
-      content-classes="q-pa-xs"
       v-model="modal"
       minimized
       :content-css="{maxWidth: '91%', maxHeight: '91%'}"
