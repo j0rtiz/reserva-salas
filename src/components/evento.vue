@@ -1,87 +1,47 @@
 <template>
-  <div>
-    <q-list
-      class="no-padding"
-      no-border
-      separator
-      link
+  <div class="q-pa-xs">
+    <q-tree
+      :nodes="Nodes"
+      node-key="label"
+      accordion
     >
-      <q-item
-        class="q-pa-xs"
-        dense
-        v-for="(evento, index) in eventos"
-        :key="index"
-        @click.native="Eventos(evento)"
+      <div
+        slot="header-root"
+        slot-scope="prop"
+        class="row items-center"
       >
-        <q-item-main>
-          <q-item
-            class="no-padding"
-            dense
-          >
-            <q-item-main
-              class="q-caption text-weight-bold text-primary uppercase"
-              label="Evento"
+        <q-card
+          color="blue-grey-2"
+          text-color="primary"
+        >
+          <blockquote style="border-radius: 3px 0 0 3px;">
+            <span class="q-subheading text-weight-bold text-primary text-no-wrap">{{ prop.node.label }}</span>
+          </blockquote>
+        </q-card>
+      </div>
+      <div
+        slot="header-body"
+        slot-scope="prop"
+        class="row items-center"
+      >
+        <q-card
+          class="cursor-pointer"
+          color="blue-grey-2"
+          text-color="primary"
+          @click.native="Eventos(prop.node.reservaId)"
+        >
+          <blockquote style="border-radius: 3px 0 0 3px;">
+            <q-icon
+              :name="prop.node.icon"
+              color="primary"
+              size="18px"
+              class="q-mr-xs"
             />
-          </q-item>
-          <q-item
-            class="q-px-none q-py-xs"
-            dense
-          >
-            <q-item-main>
-              <q-card
-                color="blue-grey-2"
-                text-color="primary"
-              >
-                <blockquote
-                  style="border-radius: 3px 0 0 3px;"
-                  class="q-body-1"
-                >{{evento.nomeEvento}}</blockquote>
-              </q-card>
-            </q-item-main>
-          </q-item>
-          <q-item
-            class="no-padding"
-            dense
-          >
-            <q-item-main
-              class="q-caption text-weight-bold text-primary uppercase q-pt-sm"
-              label="Data"
-            />
-          </q-item>
-          <q-item
-            class="q-px-none q-py-xs"
-            dense
-            v-for="(data, index) in evento.dataEvento"
-            :key="index"
-          >
-            <q-item-main>
-              <q-card
-                color="blue-grey-2"
-                text-color="primary"
-              >
-                <blockquote
-                  style="border-radius: 3px 0 0 3px;"
-                  class="q-body-1"
-                >
-                  <q-icon
-                    name="event"
-                    color="primary"
-                    size="20px"
-                  />
-                  {{data.dataInicial | FormatarData}}
-                  <q-icon
-                    name="remove"
-                    color="primary"
-                    size="12px"
-                  />
-                  {{data.dataFinal | FormatarData}}
-                </blockquote>
-              </q-card>
-            </q-item-main>
-          </q-item>
-        </q-item-main>
-      </q-item>
-    </q-list>
+            <span class="q-caption text-weight-bold text-primary text-no-wrap">{{ prop.node.label }}</span>
+          </blockquote>
+        </q-card>
+      </div>
+    </q-tree>
   </div>
 </template>
 
@@ -144,6 +104,23 @@ export default {
           }
         ]
       })
+    }
+  },
+  computed: {
+    Nodes () {
+      let nodes = []
+      this.eventos.map((evento, index) => {
+        nodes[index] = { label: evento.nomeEvento, header: 'root', children: [] }
+        evento.dataEvento.map(reserva => {
+          nodes[index].children.push({
+            icon: 'event',
+            label: `${date.formatDate(reserva.dataInicial, 'DD/MM/YYYY - HH:mm')}h - ${date.formatDate(reserva.dataFinal, 'DD/MM/YYYY - HH:mm')}h`,
+            header: 'body',
+            reservaId: evento.reservaId
+          })
+        })
+      })
+      return nodes
     }
   }
 }
