@@ -4,7 +4,7 @@
       v-if="sala.eventos"
       v-model="modal"
       minimized
-      :content-css="{maxWidth: '91%', maxHeight: '91%'}"
+      :content-css="{minWidth: '10%', maxWidth: '91%', maxHeight: '91%'}"
     >
       <evento
         :eventos="sala.eventos"

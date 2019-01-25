@@ -30,14 +30,42 @@
           text-color="primary"
           @click.native="Eventos(prop.node.reservaId)"
         >
-          <blockquote style="border-radius: 3px 0 0 3px;">
-            <q-icon
-              :name="prop.node.icon"
-              color="primary"
-              size="18px"
-              class="q-mr-xs"
-            />
-            <span class="q-caption text-weight-bold text-primary text-no-wrap">{{ prop.node.label }}</span>
+          <blockquote
+            class="text-no-wrap q-pl-none"
+            style="border-radius: 3px 0 0 3px;"
+          >
+            <q-list
+              class="no-padding"
+              no-border
+              dense
+            >
+              <q-item class="no-padding q-mb-xs">
+                <q-item-side class="flex flex-center">
+                  <q-icon
+                    :name="JSON.parse(prop.node.icon)[0]"
+                    color="primary"
+                    size="16px"
+                  />
+                </q-item-side>
+                <q-item-main
+                  class="q-caption text-weight-bold text-primary"
+                  :label="JSON.parse(prop.node.label)[0]"
+                />
+              </q-item>
+              <q-item class="no-padding">
+                <q-item-side class="flex flex-center">
+                  <q-icon
+                    :name="JSON.parse(prop.node.icon)[1]"
+                    color="primary"
+                    size="16px"
+                  />
+                </q-item-side>
+                <q-item-main
+                  class="q-caption text-weight-bold text-primary"
+                  :label="`${JSON.parse(prop.node.label)[1]} - ${JSON.parse(prop.node.label)[2]}`"
+                />
+              </q-item>
+            </q-list>
           </blockquote>
         </q-card>
       </div>
@@ -113,8 +141,8 @@ export default {
         nodes[index] = { label: evento.nomeEvento, header: 'root', children: [] }
         evento.dataEvento.map(reserva => {
           nodes[index].children.push({
-            icon: 'event',
-            label: `${date.formatDate(reserva.dataInicial, 'DD/MM/YYYY - HH:mm')}h - ${date.formatDate(reserva.dataFinal, 'DD/MM/YYYY - HH:mm')}h`,
+            icon: `["far fa-calendar-check", "far fa-clock"]`,
+            label: `["${date.formatDate(reserva.dataFinal, 'DD/MM/YYYY')}", "${date.formatDate(reserva.dataInicial, 'HH:mm')}h", "${date.formatDate(reserva.dataFinal, 'HH:mm')}h"]`,
             header: 'body',
             reservaId: evento.reservaId
           })
