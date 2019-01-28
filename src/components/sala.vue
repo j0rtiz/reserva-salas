@@ -7,9 +7,11 @@
       :content-css="{maxWidth: '91%', maxHeight: '91%'}"
     >
       <evento
-        :eventos="sala.eventos"
+        :sala="sala"
+        :modal="modal"
         @modal="() => modal = false"
         @reserva="() => $emit('reserva')"
+        @reservada="booleano => reservada = booleano"
       />
     </q-modal>
     <q-card
@@ -18,7 +20,7 @@
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
-          v-show="sala.eventos"
+          v-show="sala.eventos && reservada"
           slot="right"
           flat
           round
@@ -188,7 +190,8 @@ export default {
       modal: false,
       reservaId: '',
       dataInicial: '',
-      dataFinal: ''
+      dataFinal: '',
+      reservada: true
     }
   },
   filters: {
