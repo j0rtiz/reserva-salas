@@ -28,7 +28,7 @@
           class="cursor-pointer"
           color="blue-grey-2"
           text-color="primary"
-          @click.native="Eventos(prop.node.reservaId)"
+          @click.native="Eventos(prop.node)"
         >
           <blockquote
             class="text-no-wrap q-pl-none"
