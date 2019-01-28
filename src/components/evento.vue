@@ -79,7 +79,7 @@
 import { date } from 'quasar'
 export default {
   name: 'Evento',
-  props: ['sala', 'modal'],
+  props: ['sala', 'modal', 'novo'],
   filters: {
     FormatarData (data) {
       if (date.isValid(data)) {
@@ -88,8 +88,8 @@ export default {
     }
   },
   watch: {
-    modal (modal) {
-      if (modal) this.$refs.tree.collapseAll()
+    modal () {
+      this.$refs.tree.collapseAll()
     }
   },
   methods: {
@@ -119,25 +119,36 @@ export default {
       this.$emit('modal')
       this.$q.actionSheet({
         title: evento.label,
-        grid: true,
-        actions: [
-          {
-            label: 'Aprovar',
-            color: 'positive',
-            icon: 'event_available',
-            handler: () => {
-              this.AprovarReserva(evento.children[0].reservaId)
+        grid: false,
+        actions: evento.reservada
+          ? [
+            {
+              label: 'Remover',
+              color: 'negative',
+              icon: 'event_busy',
+              handler: () => {
+                this.RemoverReserva(evento.children[0].reservaId)
+              }
             }
-          },
-          {
-            label: 'Remover',
-            color: 'negative',
-            icon: 'event_busy',
-            handler: () => {
-              this.RemoverReserva(evento.children[0].reservaId)
+          ]
+          : [
+            {
+              label: 'Aprovar',
+              color: 'positive',
+              icon: 'event_available',
+              handler: () => {
+                this.AprovarReserva(evento.children[0].reservaId)
+              }
+            },
+            {
+              label: 'Remover',
+              color: 'negative',
+              icon: 'event_busy',
+              handler: () => {
+                this.RemoverReserva(evento.children[0].reservaId)
+              }
             }
-          }
-        ]
+          ]
       })
     }
   },
@@ -145,9 +156,8 @@ export default {
     Nodes () {
       let nodes = []
       this.sala.eventos.map((evento, index) => {
-        if (!evento.reservada) {
-          this.$emit('reservada', true)
-          nodes[index] = { label: evento.nomeEvento, header: 'root', children: [] }
+        if (!evento.reservada && this.novo) {
+          nodes[index] = { label: evento.nomeEvento, header: 'root', children: [], reservada: evento.reservada }
           evento.dataEvento.map(reserva => {
             nodes[index].children.push({
               icon: `["far fa-calendar-check", "far fa-clock"]`,
@@ -156,8 +166,16 @@ export default {
               reservaId: evento.reservaId
             })
           })
-        } else {
-          this.$emit('reservada', false)
+        } else if (evento.reservada && !this.novo) {
+          nodes[index] = { label: evento.nomeEvento, header: 'root', children: [], reservada: evento.reservada }
+          evento.dataEvento.map(reserva => {
+            nodes[index].children.push({
+              icon: `["far fa-calendar-check", "far fa-clock"]`,
+              label: `["${date.formatDate(reserva.dataFinal, 'DD/MM/YYYY')}", "${date.formatDate(reserva.dataInicial, 'HH:mm')}h", "${date.formatDate(reserva.dataFinal, 'HH:mm')}h"]`,
+              header: 'body',
+              reservaId: evento.reservaId
+            })
+          })
         }
       })
       return nodes

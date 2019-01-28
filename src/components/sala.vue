@@ -9,9 +9,9 @@
       <evento
         :sala="sala"
         :modal="modal"
+        :novo="novo"
         @modal="() => modal = false"
         @reserva="() => $emit('reserva')"
-        @reservada="booleano => reservada = booleano"
       />
     </q-modal>
     <q-card
@@ -20,14 +20,24 @@
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
-          v-show="sala.eventos && reservada"
+          v-show="sala.eventos && aprovar"
           slot="right"
           flat
           round
           dense
           color="red"
           icon="notification_important"
-          @click="modal = true"
+          @click="() => { modal = true, novo = true }"
+        />
+        <q-btn
+          v-show="sala.eventos && remover"
+          slot="right"
+          flat
+          round
+          dense
+          color="primary"
+          icon="event_busy"
+          @click="() => { modal = true, novo = false }"
         />
         <q-btn
           class="q-mr-sm"
@@ -191,7 +201,9 @@ export default {
       reservaId: '',
       dataInicial: '',
       dataFinal: '',
-      reservada: true
+      aprovar: 0,
+      remover: 0,
+      novo: false
     }
   },
   filters: {
@@ -214,6 +226,8 @@ export default {
   },
   methods: {
     VerificarReserva (sala) {
+      this.aprovar = 0
+      this.remover = 0
       if (sala.eventos && sala.eventos.length) {
         sala.eventos.map(evento => {
           if (date.isBetweenDates(Date.now(), evento.dataInicial, evento.dataFinal, { inclusiveFrom: true, inclusiveTo: true })) {
@@ -221,6 +235,8 @@ export default {
             this.dataInicial = evento.dataInicial
             this.dataFinal = evento.dataFinal
           }
+          if (evento.reservada) this.remover++
+          else this.aprovar++
         })
       }
     }
