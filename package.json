@@ -1,6 +1,6 @@
 {
   "name": "reserva-salas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reserva de Salas",
   "productName": "Reserva de Salas",
   "cordovaId": "org.cordova.quasar.app",
