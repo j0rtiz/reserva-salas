@@ -38,6 +38,18 @@ const routes = [
     ]
   },
   {
+    path: '/usuario',
+    component: () => import('layouts/home.vue'),
+    meta: { rule: 'isAdmin' },
+    children: [
+      {
+        path: '/usuario/:id',
+        component: () => import('pages/usuario.vue'),
+        meta: { rule: 'isAdmin' }
+      }
+    ]
+  },
+  {
     path: '*',
     component: () => import('pages/404.vue'),
     meta: { rule: 'isEveryone' }

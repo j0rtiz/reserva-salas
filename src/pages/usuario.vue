@@ -1,42 +1,137 @@
 <template>
-  <q-page class="row bg-secondary" :class="$q.screen.sm || $q.screen.xs ? 'justify-between items-stretch' : 'flex-center fit'">
-    <transition appear enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutRight">
-      <q-card class="col-xl-6 col-lg-8 col-md-10 col-sm-12 col-xs-12 bg-white" :style="$q.screen.sm || $q.screen.xs ? 'border-radius: 0;' : ''">
+  <q-page class="row flex-center fit bg-blue-grey-2 q-pa-sm">
+    <div class="col-xl-6 col-lg-8 col-md-10 col-sm-12 col-xs-12">
+      <q-card color="white">
         <q-card-title class="bg-primary text-white q-py-sm">
-          <strong>{{id ? 'Editar' : 'Novo'}} usuário</strong>
+          <span>{{id ? 'Editar' : 'Novo'}} usuário</span>
         </q-card-title>
-        <q-card-main class="row q-mt-sm">
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" label="Nome de usuário" label-width="12" :error="$v.formulario.username.$error">
-            <q-input color="primary" clearable v-model="formulario.username" autofocus @blur="$v.formulario.username.$touch" />
-            <div slot="helper" v-if="!$v.formulario.username.required && $v.formulario.username.$error">Campo obrigatório.</div>
-            <div slot="helper" v-if="!$v.formulario.username.minLength">O nome de usuário não pode conter menos que {{$v.formulario.username.$params.minLength.min}} caracteres.</div>
-            <div slot="helper" v-if="!$v.formulario.username.maxLength">O nome de usuário não pode conter mais que {{$v.formulario.username.$params.maxLength.max}} caracteres.</div>
+        <q-card-main class="row">
+          <q-field
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
+            label="Nome de usuário"
+            label-width="12"
+            :error="$v.formulario.username.$error"
+          >
+            <q-input
+              v-model="formulario.username"
+              color="primary"
+              clearable
+              autofocus
+              @blur="$v.formulario.username.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.username.required && $v.formulario.username.$error"
+            >Campo obrigatório.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.username.minLength"
+            >O nome de usuário não pode conter menos que {{$v.formulario.username.$params.minLength.min}} caracteres.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.username.maxLength"
+            >O nome de usuário não pode conter mais que {{$v.formulario.username.$params.maxLength.max}} caracteres.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" label="Telefone" label-width="12" :error="$v.formulario.phone.$error">
-            <q-input color="primary" clearable v-model="formulario.phone" type="tel" @blur="$v.formulario.phone.$touch" v-mask="['(##) ####-####', '(##) #####-####']" />
-            <div slot="helper" v-if="!$v.formulario.phone.required && $v.formulario.phone.$error">Campo obrigatório.</div>
-            <div slot="helper" v-if="!$v.formulario.phone.minLength">O telefone não pode conter menos que {{$v.formulario.phone.$params.minLength.min}} caracteres.</div>
+          <q-field
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
+            label="Telefone"
+            label-width="12"
+            :error="$v.formulario.phone.$error"
+          >
+            <q-input
+              v-model="formulario.phone"
+              color="primary"
+              clearable
+              type="tel"
+              v-mask="['(##) ####-####', '(##) #####-####']"
+              @blur="$v.formulario.phone.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.phone.required && $v.formulario.phone.$error"
+            >Campo obrigatório.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.phone.minLength"
+            >O telefone não pode conter menos que {{$v.formulario.phone.$params.minLength.min}} caracteres.</div>
           </q-field>
-          <q-field class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-sm" label="E-mail" label-width="12" :error="$v.formulario.email.$error">
-            <q-input color="primary" clearable v-model="formulario.email" type="email" @blur="$v.formulario.email.$touch" />
-            <div slot="helper" v-if="!$v.formulario.email.email && $v.formulario.email.$error">E-mail inválido.</div>
+          <q-field
+            class="col-12 q-px-sm q-pt-md"
+            label="E-mail"
+            label-width="12"
+            :error="$v.formulario.email.$error"
+          >
+            <q-input
+              v-model="formulario.email"
+              color="primary"
+              clearable
+              type="email"
+              @blur="$v.formulario.email.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.email.required && $v.formulario.email.$error"
+            >Campo obrigatório.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.email.email && $v.formulario.email.$error"
+            >E-mail inválido.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" label="Senha" label-width="12" :error="$v.formulario.password.$error">
-            <q-input color="primary" v-model="formulario.password" type="password" @blur="$v.formulario.password.$touch" />
-            <div slot="helper" v-if="!$v.formulario.password.required && $v.formulario.password.$error">Campo obrigatório.</div>
-            <div slot="helper" v-if="!$v.formulario.password.minLength">A senha não pode conter menos que {{$v.formulario.password.$params.minLength.min}} caracteres.</div>
-            <div slot="helper" v-if="!$v.formulario.password.maxLength">A senha não pode conter mais que {{$v.formulario.password.$params.maxLength.max}} caracteres.</div>
+          <q-field
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
+            label="Senha"
+            label-width="12"
+            :error="$v.formulario.password.$error"
+          >
+            <q-input
+              v-model="formulario.password"
+              color="primary"
+              type="password"
+              @blur="$v.formulario.password.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.password.required && $v.formulario.password.$error"
+            >Campo obrigatório.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.password.minLength"
+            >A senha não pode conter menos que {{$v.formulario.password.$params.minLength.min}} caracteres.</div>
+            <div
+              slot="helper"
+              v-if="!$v.formulario.password.maxLength"
+            >A senha não pode conter mais que {{$v.formulario.password.$params.maxLength.max}} caracteres.</div>
           </q-field>
-          <q-field class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pa-sm" label="Confirmar senha" label-width="12" :error="$v.formulario.confirmacaoPassword.$error">
-            <q-input color="primary" v-model="formulario.confirmacaoPassword" type="password" @blur="$v.formulario.confirmacaoPassword.$touch" />
-            <div slot="helper" v-if="!$v.formulario.confirmacaoPassword.sameAsPassword && $v.formulario.confirmacaoPassword.$error">A senha têm que ser igual.</div>
+          <q-field
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
+            label="Confirmar senha"
+            label-width="12"
+            :error="$v.formulario.confirmacaoPassword.$error"
+          >
+            <q-input
+              v-model="formulario.confirmacaoPassword"
+              color="primary"
+              type="password"
+              @blur="$v.formulario.confirmacaoPassword.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.confirmacaoPassword.sameAsPassword && $v.formulario.confirmacaoPassword.$error"
+            >A senha têm que ser igual.</div>
           </q-field>
         </q-card-main>
-        <q-card-actions class="q-mx-md q-mb-md" :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'">
-          <q-btn class="full-width" color="primary" label="Salvar" icon="save" size="form" @click="Salvar(id)" />
+        <q-card-actions class="q-pa-md">
+          <q-btn
+            class="full-width"
+            color="primary"
+            label="Salvar"
+            icon="save"
+            size="form"
+            @click="Salvar(id)"
+          />
         </q-card-actions>
       </q-card>
-    </transition>
+    </div>
   </q-page>
 </template>
 
@@ -47,6 +142,7 @@ export default {
   data () {
     return {
       id: Number(this.$route.params.id),
+      usuarioId: this.$store.state.session.id,
       formulario: {
         username: '',
         phone: '',
@@ -61,7 +157,7 @@ export default {
       username: {
         required,
         minLength: minLength(5),
-        maxLength: maxLength(25)
+        maxLength: maxLength(30)
       },
       phone: {
         required,
@@ -76,7 +172,7 @@ export default {
           return !this.id
         }),
         minLength: minLength(5),
-        maxLength: maxLength(25)
+        maxLength: maxLength(30)
       },
       confirmacaoPassword: {
         sameAsPassword: sameAs('password')
@@ -85,16 +181,16 @@ export default {
   },
   mounted () {
     this.$q.loading.show()
-    this.Usuario(this.id)
+    this.Usuario(this.usuarioId, this.id)
   },
   methods: {
-    Usuario (id) {
-      if (id) {
+    Usuario (usuarioId, id) {
+      if (usuarioId === id) {
         this.$axios.get(`/usuarios/${id}`).then(Res => {
-          let usuario = Res.data
-          delete usuario.id
-          delete usuario.confirmacaoPassword
-          this.formulario = usuario
+          let formulario = Res.data
+          let regex = formulario.phone.length === 11 ? /(\d{2})(\d{5})(\d{4})$/ : /(\d{2})(\d{4})(\d{4})$/
+          formulario.phone = formulario.phone.replace(regex, '($1) $2-$3')
+          this.formulario = formulario
         }).catch(Err => {
           let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
           this.$q.notify({
@@ -106,12 +202,14 @@ export default {
         this.$q.loading.hide()
       } else {
         this.$q.loading.hide()
+        this.$router.push('/')
       }
     },
     Salvar (id) {
       this.$v.formulario.$touch()
       if (!this.$v.formulario.$error) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
+        formulario.phone = formulario.phone.replace(/[() -]/g, '')
         const salvar = id ? this.$axios.patch(`/usuarios/${id}`, formulario) : this.$axios.post('/usuarios', formulario)
         salvar.then(Res => {
           this.$q.notify({

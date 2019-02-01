@@ -93,7 +93,7 @@
               <q-item-tile
                 class="q-caption q-pt-xs"
                 sublabel
-              >{{$store.state.session.phone}}</q-item-tile>
+              >{{$store.state.session.email}}</q-item-tile>
             </q-item-main>
           </q-item>
           <q-item
