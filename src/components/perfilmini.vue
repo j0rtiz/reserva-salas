@@ -1,5 +1,8 @@
 <template>
-  <div :class="menu ? 'zoom' : 'zoom-hover'">
+  <div
+    v-if="$store.state.session.username"
+    :class="menu ? 'zoom' : 'zoom-hover'"
+  >
     <q-btn
       :class="menu ? 'zoom-color' : 'no-shadow perfilmini'"
       flat

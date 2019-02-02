@@ -2,14 +2,14 @@ import { AclInstaller, AclCreate, AclRule } from 'vue-acl'
 export default ({ app, router, Vue }) => {
   Vue.use(AclInstaller)
   const aclcreate = new AclCreate({
-    initial: 'unauthenticated',
+    initial: 'public',
     notfound: '/login',
     router,
     acceptLocalRules: true,
     globalRules: {
-      isEveryone: new AclRule('unauthenticated').or('authenticated').or('admin').generate(),
+      isAdmin: new AclRule('admin').generate(),
       isAuthenticated: new AclRule('authenticated').or('admin').generate(),
-      isAdmin: new AclRule('admin').generate()
+      isPublic: new AclRule('public').or('authenticated').or('admin').generate()
     }
   })
   Vue.use(aclcreate)

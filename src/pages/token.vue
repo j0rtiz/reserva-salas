@@ -17,8 +17,7 @@ export default {
         this.$store.commit('session/set', Res.data)
 
         // Nível de permissão
-        this.$acl.change('admin')
-        // this.$acl.change('authenticated')
+        this.$acl.change(Res.data.acl)
 
         this.$q.localStorage.set('AutoLogin', this.$route.query)
         this.$router.push(this.$q.localStorage.get.item('urlGoTo'))

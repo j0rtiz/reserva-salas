@@ -6,34 +6,34 @@ const routes = [
   {
     path: '/login',
     component: () => import('layouts/login.vue'),
-    meta: { rule: 'isEveryone' },
+    meta: { rule: 'isPublic' },
     children: [
       {
         path: '',
         component: () => import('pages/login.vue'),
-        meta: { rule: 'isEveryone' }
+        meta: { rule: 'isPublic' }
       },
       {
         path: 'token',
         component: () => import('pages/token.vue'),
-        meta: { rule: 'isEveryone' }
+        meta: { rule: 'isPublic' }
       },
       {
         path: 'logout',
         component: () => import('pages/logout.vue'),
-        meta: { rule: 'isEveryone' }
+        meta: { rule: 'isPublic' }
       }
     ]
   },
   {
     path: '/home',
     component: () => import('layouts/home.vue'),
-    meta: { rule: 'isEveryone' },
+    meta: { rule: 'isPublic' },
     children: [
       {
         path: '/home',
         component: () => import('pages/home.vue'),
-        meta: { rule: 'isEveryone' }
+        meta: { rule: 'isPublic' }
       }
     ]
   },
@@ -52,7 +52,7 @@ const routes = [
   {
     path: '*',
     component: () => import('pages/404.vue'),
-    meta: { rule: 'isEveryone' }
+    meta: { rule: 'isPublic' }
   }
 ]
 export default routes
