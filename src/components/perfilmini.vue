@@ -3,6 +3,42 @@
     v-if="$store.state.session.username"
     :class="menu ? 'zoom' : 'zoom-hover'"
   >
+    <q-modal
+      v-model="modal"
+      minimized
+      no-esc-dismiss
+      no-backdrop-dismiss
+    >
+      <q-card
+        class="non-selectable"
+        flat
+      >
+        <q-card-main class="text-center">
+          <div class="q-display-1 text-weight-bold text-dark">{{$NodePackage.productName}}</div>
+          <q-chip
+            class="text-weight-medium q-mb-lg"
+            color="red-4"
+            text-color="white"
+            small
+            tag
+          >Versão: {{$NodePackage.version}}</q-chip>
+          <div class="q-body-1 text-justify text-faded q-px-sm">
+            <p class="no-margin">
+              <span class="text-weight-bold ">{{$NodePackage.productName}}</span>
+              <span class="lowercase"> é um software de código aberto, para gerenciamento de reserva de salas.</span>
+            </p>
+          </div>
+        </q-card-main>
+        <q-card-actions>
+          <q-btn
+            class="full-width primary-dark"
+            color="primary"
+            label="Ok"
+            v-close-overlay
+          />
+        </q-card-actions>
+      </q-card>
+    </q-modal>
     <q-btn
       :class="menu ? 'zoom-color' : 'no-shadow perfilmini'"
       flat
@@ -11,57 +47,7 @@
       no-ripple
       @click="menu = true"
     >
-      <q-modal
-        v-model="modal"
-        minimized
-        no-esc-dismiss
-        no-backdrop-dismiss
-      >
-        <q-card
-          class="non-selectable"
-          flat
-        >
-          <q-card-main class="text-center">
-            <div class="q-display-1 text-weight-bold text-dark">{{$NodePackage.productName}}</div>
-            <q-chip
-              class="text-weight-medium q-mb-lg"
-              color="red-4"
-              text-color="white"
-              small
-              tag
-            >Versão: {{$NodePackage.version}}</q-chip>
-            <div class="q-body-1 text-justify text-faded q-px-sm">
-              <p class="no-margin">
-                <span class="text-weight-bold ">{{$NodePackage.productName}}</span>
-                <span class="lowercase"> é um software de código aberto, para gerenciamento de reserva de salas.</span>
-              </p>
-            </div>
-          </q-card-main>
-          <q-card-actions>
-            <q-btn
-              class="full-width primary-dark"
-              color="primary"
-              label="Ok"
-              v-close-overlay
-            />
-          </q-card-actions>
-        </q-card>
-      </q-modal>
-      <img
-        v-if="$store.state.session.avatar"
-        class="avatar-header"
-        round
-        :src="$store.state.session.avatar"
-      >
-      <q-btn
-        v-else
-        class="no-shadow"
-        round
-        dense
-        no-ripple
-      >
-        <strong class="q-title text-weight-bold">{{$store.state.session.username.substring(0,1).toUpperCase()}}</strong>
-      </q-btn>
+      <strong class="q-title text-weight-bold">{{$store.state.session.username.substring(0,1).toUpperCase()}}</strong>
       <q-popover
         ref="popover"
         self="bottom right"
@@ -74,11 +60,7 @@
           style="width: 300px;"
         >
           <q-item class="q-subheading text-weight-medium text-dark q-mb-sm">
-            <q-item-side
-              v-if="$store.state.session.avatar"
-              :avatar="$store.state.session.avatar"
-            />
-            <q-item-side v-else>
+            <q-item-side>
               <q-btn
                 class="primary-dark no-shadow q-mr-sm"
                 size="xl"
@@ -128,7 +110,7 @@
             class="q-mt-sm"
             dense
           >
-            <q-item-main label="" />
+            <q-item-main />
             <q-item-side
               right
               icon="exit_to_app"
