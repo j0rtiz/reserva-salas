@@ -8,15 +8,13 @@
         <q-card-main class="row">
           <q-field
             class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
-            label="Nome de usuário"
-            label-width="12"
             :error="$v.formulario.username.$error"
           >
             <q-input
               v-model="formulario.username"
+              float-label="Nome de usuário"
               color="primary"
               clearable
-              autofocus
               @blur="$v.formulario.username.$touch"
             />
             <div
@@ -34,15 +32,14 @@
           </q-field>
           <q-field
             class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
-            label="Telefone"
-            label-width="12"
             :error="$v.formulario.phone.$error"
           >
             <q-input
               v-model="formulario.phone"
+              type="tel"
+              float-label="Telefone"
               color="primary"
               clearable
-              type="tel"
               v-mask="['(##) ####-####', '(##) #####-####']"
               @blur="$v.formulario.phone.$touch"
             />
@@ -56,16 +53,15 @@
             >O telefone não pode conter menos que {{$v.formulario.phone.$params.minLength.min}} caracteres.</div>
           </q-field>
           <q-field
-            class="col-12 q-px-sm q-pt-md"
-            label="E-mail"
-            label-width="12"
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
             :error="$v.formulario.email.$error"
           >
             <q-input
               v-model="formulario.email"
+              type="email"
+              float-label="E-mail"
               color="primary"
               clearable
-              type="email"
               @blur="$v.formulario.email.$touch"
             />
             <div
@@ -79,14 +75,29 @@
           </q-field>
           <q-field
             class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
-            label="Senha"
-            label-width="12"
+            :error="$v.formulario.acl.$error"
+          >
+            <q-select
+              v-model="formulario.acl"
+              :options="acls"
+              float-label="Nível de permissão"
+              color="primary"
+              @blur="$v.formulario.acl.$touch"
+            />
+            <div
+              slot="helper"
+              v-if="!$v.formulario.acl.required && $v.formulario.acl.$error"
+            >Campo obrigatório.</div>
+          </q-field>
+          <q-field
+            class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
             :error="$v.formulario.password.$error"
           >
             <q-input
               v-model="formulario.password"
-              color="primary"
               type="password"
+              float-label="Senha"
+              color="primary"
               @blur="$v.formulario.password.$touch"
             />
             <div
@@ -104,14 +115,13 @@
           </q-field>
           <q-field
             class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12 q-px-sm q-pt-md"
-            label="Confirmar senha"
-            label-width="12"
             :error="$v.formulario.confirmacaoPassword.$error"
           >
             <q-input
               v-model="formulario.confirmacaoPassword"
-              color="primary"
               type="password"
+              float-label="Confirmar senha"
+              color="primary"
               @blur="$v.formulario.confirmacaoPassword.$touch"
             />
             <div
@@ -137,6 +147,7 @@
 
 <script>
 import { required, minLength, maxLength, sameAs, requiredIf, email } from 'vuelidate/lib/validators'
+
 export default {
   name: 'Usuario',
   data () {
@@ -147,9 +158,14 @@ export default {
         username: '',
         phone: '',
         email: '',
+        acl: '',
         password: '',
         confirmacaoPassword: ''
-      }
+      },
+      acls: [
+        { label: 'Usuário', value: 'authenticated' },
+        { label: 'Administrador', value: 'admin' }
+      ]
     }
   },
   validations: {
@@ -167,6 +183,9 @@ export default {
         required,
         email
       },
+      acl: {
+        required
+      },
       password: {
         required: requiredIf(function () {
           return !this.id
@@ -180,26 +199,29 @@ export default {
     }
   },
   mounted () {
-    this.$q.loading.show()
     this.Usuario(this.usuarioId, this.id)
   },
   methods: {
+    FormatarTelefone (telefone) {
+      const regexEntrada = telefone.length === 11
+        ? /(\d{2})(\d{5})(\d{4})$/
+        : /(\d{2})(\d{4})(\d{4})$/
+      const regexSaida = /[() -]/g
+      return parseInt(telefone)
+        ? telefone.replace(regexEntrada, '($1) $2-$3')
+        : telefone.replace(regexSaida, '')
+    },
     Usuario (usuarioId, id) {
+      this.$q.loading.show()
       if (usuarioId === id) {
-        this.$axios.get(`/usuarios/${id}`).then(Res => {
-          let formulario = Res.data
-          let regex = formulario.phone.length === 11 ? /(\d{2})(\d{5})(\d{4})$/ : /(\d{2})(\d{4})(\d{4})$/
-          formulario.phone = formulario.phone.replace(regex, '($1) $2-$3')
-          this.formulario = formulario
-        }).catch(Err => {
-          let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-          this.$q.notify({
-            type: 'negative',
-            timeout: 1000,
-            message: erro
+        this.$axios.get(`/usuarios/${id}`)
+          .then(Res => {
+            Res.data.phone = this.FormatarTelefone(Res.data.phone)
+            Res.data.acl = Res.data.acl[0]
+            this.formulario = Res.data
           })
-        })
-        this.$q.loading.hide()
+          .catch(this.AxiosCatch)
+          .finally(this.$q.loading.hide())
       } else {
         this.$q.loading.hide()
         this.$router.push('/')
@@ -209,23 +231,14 @@ export default {
       this.$v.formulario.$touch()
       if (!this.$v.formulario.$error) {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
-        formulario.phone = formulario.phone.replace(/[() -]/g, '')
-        const salvar = id ? this.$axios.patch(`/usuarios/${id}`, formulario) : this.$axios.post('/usuarios', formulario)
-        salvar.then(Res => {
-          this.$q.notify({
-            type: 'positive',
-            timeout: 1000,
-            message: 'Salvo com sucesso!'
-          })
-          this.$router.push('/')
-        }).catch(Err => {
-          let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-          this.$q.notify({
-            type: 'negative',
-            timeout: 1000,
-            message: erro
-          })
-        })
+        formulario.phone = this.FormatarTelefone(formulario.phone)
+        formulario.acl = [formulario.acl]
+        const salvar = id
+          ? this.$axios.patch(`/usuarios/${id}`, formulario)
+          : this.$axios.post('/usuarios', formulario)
+        salvar
+          .then(() => this.AxiosSuccess('/'))
+          .catch(this.AxiosCatch)
       }
     }
   }

@@ -10,6 +10,14 @@ const AxiosCatchMixin = {
         timeout: 1000,
         message: erro
       })
+    },
+    AxiosSuccess (Route) {
+      this.$router.push(Route)
+      return Notify.create({
+        type: 'positive',
+        timeout: 1000,
+        message: 'Salvo com sucesso!'
+      })
     }
   }
 }
