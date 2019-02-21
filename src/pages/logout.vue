@@ -10,18 +10,11 @@ export default {
   },
   methods: {
     Sair () {
-      this.$axios.post('/usuarios/logout').then(Res => {
-        this.$store.commit('session/resetState')
+      this.$axios.post('/usuarios/logout').finally(() => {
         window.localStorage.clear()
+        this.$store.commit('session/resetState')
         this.$acl.change('public')
         this.$router.push('/')
-      }).catch(Err => {
-        let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-        this.$q.notify({
-          type: 'negative',
-          timeout: 1000,
-          message: erro
-        })
       })
     }
   }

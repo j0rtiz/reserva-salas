@@ -1,4 +1,5 @@
 import { AclInstaller, AclCreate, AclRule } from 'vue-acl'
+
 export default ({ app, router, Vue }) => {
   Vue.use(AclInstaller)
   const aclcreate = new AclCreate({

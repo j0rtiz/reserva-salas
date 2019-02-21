@@ -6,31 +6,25 @@
 export default {
   name: 'Token',
   mounted () {
-    this.$q.loading.show()
     this.Token()
   },
   methods: {
     Token () {
-      this.$axios.defaults.headers.common['Authorization'] = this.$route.query['accessToken']
-      this.$axios.get(`/usuarios/${this.$route.query['usuarioId']}`).then(Res => {
-        Res.data.accessToken = this.$route.query['accessToken']
+      this.$q.loading.show()
+      const query = this.$route.query
+      const urlGoTo = this.$q.localStorage.get.item('urlGoTo') || '/'
+      this.$axios.defaults.headers.common.Authorization = query.accessToken
+      this.$axios.get(`/usuarios/${query.usuarioId}`).then(Res => {
+        Res.data.accessToken = query.accessToken
+        this.$q.localStorage.set('AutoLogin', query)
         this.$store.commit('session/set', Res.data)
-
-        // Nível de permissão
         this.$acl.change(Res.data.acl)
-
-        this.$q.localStorage.set('AutoLogin', this.$route.query)
-        this.$router.push(this.$q.localStorage.get.item('urlGoTo'))
-      }).catch(Err => {
+        this.$router.push(urlGoTo)
+      }).catch(() => {
         this.$router.push('/login')
-        let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-        this.$q.notify({
-          type: 'negative',
-          timeout: 1000,
-          message: erro
-        })
+      }).finally(() => {
+        this.$q.loading.hide()
       })
-      this.$q.loading.hide()
     }
   }
 }

@@ -1,6 +1,8 @@
 export default {
-  id: 0,
+  id: null,
   accessToken: null,
   username: null,
-  email: null
+  email: null,
+  phone: null,
+  acl: ['public']
 }

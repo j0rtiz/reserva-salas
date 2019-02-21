@@ -1,4 +1,4 @@
-const routes = [
+export default [
   {
     path: '/',
     redirect: '/home'
@@ -6,7 +6,6 @@ const routes = [
   {
     path: '/login',
     component: () => import('layouts/login.vue'),
-    meta: { rule: 'isPublic' },
     children: [
       {
         path: '',
@@ -28,19 +27,17 @@ const routes = [
   {
     path: '/home',
     component: () => import('layouts/home.vue'),
-    meta: { rule: 'isPublic' },
     children: [
       {
-        path: '/home',
+        path: '',
         component: () => import('pages/home.vue'),
-        meta: { rule: 'isPublic' }
+        meta: { rule: 'isAuthenticated' }
       }
     ]
   },
   {
     path: '/usuario',
     component: () => import('layouts/home.vue'),
-    meta: { rule: 'isAdmin' },
     children: [
       {
         path: '/usuario/:id',
@@ -55,4 +52,3 @@ const routes = [
     meta: { rule: 'isPublic' }
   }
 ]
-export default routes

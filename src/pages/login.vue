@@ -1,7 +1,7 @@
 <template>
   <q-page
-    class="row bg-light"
-    :class="$q.screen.sm || $q.screen.xs ? 'justify-between items-stretch' : 'flex-center fit'"
+    class="row"
+    :class="{'flex-center fit bg-grey-4': !$q.screen.sm && !$q.screen.xs, 'justify-center items-start bg-white q-pt-sm': $q.screen.sm, 'justify-center items-start bg-white q-pt-xl': $q.screen.xs}"
   >
     <transition
       appear
@@ -9,26 +9,34 @@
       leave-active-class="animated flipOutX"
     >
       <q-card
-        class="col-lg-4 col-md-5 col-sm-12 col-xs-12 bg-white"
+        class="col-lg-4 col-md-5 col-sm-6 col-xs-12"
         :class="$q.screen.width > 1600 ? 'col-xl-2' : 'col-xl-3'"
-        :style="$q.screen.sm || $q.screen.xs ? 'border-radius: 0;' : ''"
+        :flat="$q.screen.sm || $q.screen.xs"
+        color="white"
+        text-color="faded"
       >
-        <q-card-title class="bg-primary text-white q-py-sm">
-          <strong>{{$NodePackage.productName}}</strong>
+        <q-card-title
+          class="q-py-sm"
+          :class="{'bg-primary text-white': !$q.screen.sm && !$q.screen.xs, 'text-center q-pt-lg': $q.screen.sm, 'text-center q-pt-xl': $q.screen.xs}"
+        >
+          <span
+            class="text-weight-medium"
+            :class="$q.screen.sm || $q.screen.xs ? 'q-display-1' : 'q-title'"
+          >{{$NodePackage.productName}}</span>
         </q-card-title>
-        <q-card-main class="row q-mt-sm">
+        <q-card-main
+          class="row"
+          :class="$q.screen.xs ? 'q-mt-xl' : 'q-mt-sm'"
+        >
           <q-field
-            class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-xs-12 q-pa-sm"
-            label="Usuário"
-            label-width="12"
+            class="q-body-2 col-12 q-pa-sm"
             :error="$v.formulario.username.$error"
           >
             <q-input
-              class="border-1"
-              inverted-light
-              color="white"
+              class="text-weight-regular"
               v-model="formulario.username"
-              autofocus
+              float-label="Usuário"
+              color="primary"
               clearable
               @blur="$v.formulario.username.$touch"
             />
@@ -46,17 +54,15 @@
             >O nome de usuário não pode conter mais que {{$v.formulario.username.$params.maxLength.max}} caracteres.</div>
           </q-field>
           <q-field
-            class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-xs-12 q-pa-sm"
-            label="Senha"
-            label-width="12"
+            class="q-body-2 col-12 q-pa-sm"
             :error="$v.formulario.password.$error"
           >
             <q-input
-              class="border-1"
-              inverted-light
-              color="white"
+              class="text-weight-regular"
               v-model="formulario.password"
+              float-label="Senha"
               type="password"
+              color="primary"
               @keyup.enter="Entrar"
               @blur="$v.formulario.password.$touch"
             />
@@ -74,16 +80,13 @@
             >A senha não pode conter mais que {{$v.formulario.password.$params.maxLength.max}} caracteres.</div>
           </q-field>
         </q-card-main>
-        <q-card-actions
-          class="q-mx-md q-mb-md"
-          :align="$q.screen.sm || $q.screen.xs ? 'center' : 'end'"
-        >
+        <q-card-actions class="q-pa-md">
           <q-btn
-            class="full-width primary-dark"
+            class="full-width"
             color="primary"
             label="Entrar"
-            icon="done"
             size="form"
+            rounded
             @click="Entrar"
           />
         </q-card-actions>
@@ -94,11 +97,11 @@
 
 <script>
 import { required, minLength, maxLength } from 'vuelidate/lib/validators'
+
 export default {
   name: 'Login',
   data () {
     return {
-      carregando: false,
       formulario: {
         username: '',
         password: ''
@@ -110,29 +113,21 @@ export default {
       username: {
         required,
         minLength: minLength(5),
-        maxLength: maxLength(20)
+        maxLength: maxLength(30)
       },
       password: {
         required,
         minLength: minLength(5),
-        maxLength: maxLength(20)
+        maxLength: maxLength(30)
       }
     }
-  },
-  mounted () {
-    this.$q.loading.hide()
   },
   methods: {
     Entrar () {
       this.$v.formulario.$touch()
-      if (this.$v.formulario.$error) {
-        this.$q.notify({
-          type: 'negative',
-          timeout: 1000,
-          message: 'Dados inválidos'
-        })
-      } else {
-        this.$axios.post('/usuarios/login', this.formulario).then(Res => {
+      if (!this.$v.formulario.$error) {
+        const formulario = JSON.parse(JSON.stringify(this.formulario))
+        this.$axios.post('/usuarios/login', formulario).then((Res) => {
           this.$router.push({
             path: '/login/token',
             query: {
@@ -140,14 +135,7 @@ export default {
               usuarioId: Res.data.userId
             }
           })
-        }).catch(Err => {
-          let erro = Err.response.data.error.message.charAt(0).toUpperCase() + Err.response.data.error.message.substring(1)
-          this.$q.notify({
-            type: 'negative',
-            timeout: 1000,
-            message: erro
-          })
-        })
+        }).catch(this.AxiosCatch)
       }
     }
   }
