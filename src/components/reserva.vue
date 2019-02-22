@@ -184,7 +184,7 @@ export default {
       nomeEvento: {
         required,
         minLength: minLength(5),
-        maxLength: maxLength(30)
+        maxLength: maxLength(18)
       },
       dataInicial: {
         required

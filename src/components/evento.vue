@@ -8,11 +8,13 @@
       accordion
     >
       <div
+        class="row items-center"
         slot="header-root"
         slot-scope="prop"
-        class="row items-center"
       >
         <q-card
+          style="width: 290px"
+          inline
           color="blue-grey-2"
           text-color="primary"
           @click.native="Eventos(prop.node)"
