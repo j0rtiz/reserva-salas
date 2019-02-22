@@ -211,11 +211,10 @@ export default {
       this.formulario.salaId = sala.id
     },
     modal (modal) {
+      this.Resetar()
       if (modal) {
         this.descricaoSala = `${this.sala.nrSala} - ${this.sala.tpSala}`.toUpperCase()
         this.inicial = Date.now()
-      } else {
-        this.Resetar()
       }
     },
     'formulario.dataInicial' (dataInicial) {
