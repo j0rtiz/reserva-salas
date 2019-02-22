@@ -198,6 +198,11 @@ export default {
       }
     }
   },
+  watch: {
+    'formulario.password' (password) {
+      this.$v.formulario.confirmacaoPassword.$reset()
+    }
+  },
   mounted () {
     this.Usuario(this.usuarioId, this.id)
   },
@@ -218,6 +223,8 @@ export default {
           .then(Res => {
             Res.data.phone = this.FormatarTelefone(Res.data.phone)
             Res.data.acl = Res.data.acl[0]
+            Res.data.password = ''
+            Res.data.confirmacaoPassword = ''
             this.formulario = Res.data
           })
           .catch(this.AxiosCatch)
@@ -233,6 +240,10 @@ export default {
         let formulario = JSON.parse(JSON.stringify(this.formulario))
         formulario.phone = this.FormatarTelefone(formulario.phone)
         formulario.acl = [formulario.acl]
+        if (!formulario.password) {
+          delete formulario.password
+          delete formulario.confirmacaoPassword
+        }
         const salvar = id
           ? this.$axios.patch(`/usuarios/${id}`, formulario)
           : this.$axios.post('/usuarios', formulario)

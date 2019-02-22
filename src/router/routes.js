@@ -42,7 +42,7 @@ export default [
       {
         path: '/usuario/:id',
         component: () => import('pages/usuario.vue'),
-        meta: { rule: 'isAdmin' }
+        meta: { rule: 'isAuthenticated' }
       }
     ]
   },
