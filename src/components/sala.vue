@@ -20,6 +20,7 @@
     >
       <q-card-title class="bg-light uppercase no-padding">
         <q-btn
+          v-if="$acl.check('isAdmin')"
           v-show="sala.eventos && aprovar"
           slot="right"
           flat
@@ -30,6 +31,7 @@
           @click="() => { modal = true, novo = true }"
         />
         <q-btn
+          v-if="$acl.check('isAdmin')"
           v-show="sala.eventos && remover"
           slot="right"
           flat

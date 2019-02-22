@@ -119,7 +119,7 @@ export default {
       this.$emit('modal')
       this.$q.actionSheet({
         title: evento.label,
-        grid: false,
+        grid: true,
         actions: evento.reservada
           ? [
             {
